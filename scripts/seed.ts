@@ -63,6 +63,9 @@ async function main() {
     .update({
       bio: "Frontend student at TechEdu building interfaces that feel fast and friendly. Currently deep in JavaScript and React.",
       location: "Lagos, Nigeria",
+      xp: 2450,
+      level: 7,
+      streak_days: 12,
     })
     .eq("id", alexId);
 

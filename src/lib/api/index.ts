@@ -1,5 +1,5 @@
 import { attendanceHistory, attendanceSummary, getMonthAttendance } from "@/data/attendance";
-import { allSubjects, getLesson, getSubject, getTopics, tracks } from "@/data/curriculum";
+import { allSubjects } from "@/data/curriculum";
 import {
   achievements,
   certificates,
@@ -9,48 +9,29 @@ import {
 } from "@/data/gamification";
 import { challenges, getChallenge } from "@/data/practice";
 import { getProject, projects } from "@/data/projects";
+import { activity, announcements, notifications, skills, upcomingClasses } from "@/data/student";
 import {
-  activity,
-  announcements,
-  notifications,
-  skills,
-  student,
-  upcomingClasses,
-  weeklyActivity,
-} from "@/data/student";
+  getLessonFn,
+  getSubjectFn,
+  getTracksFn,
+  markLessonCompleteFn,
+} from "./curriculum.functions";
+import { getStudentProfileFn } from "./student.functions";
 import { NotFoundError, read, write } from "./client";
 
 export const api = {
-  getStudent: () => read(student),
-  getDashboard: () =>
-    read(() => ({
-      student,
-      weeklyActivity,
-      upcomingClasses,
-      announcements,
-      continueLearning: {
-        subject: "JavaScript",
-        subjectSlug: "javascript",
-        topicId: "javascript-7",
-        topic: "DOM Manipulation",
-        progress: 65,
-        minutesRemaining: 18,
-      },
-    })),
-  getTracks: () => read(tracks),
+  // Real, database-backed (see src/lib/api/*.functions.ts). Everything
+  // below getStudent/getLesson still reads from src/data/* mocks — wired up
+  // as their own domains (attendance, practice, projects, achievements,
+  // notifications) land in later phases.
+  getStudent: () => getStudentProfileFn(),
+  getDashboard: () => getStudentProfileFn(),
+  getTracks: () => getTracksFn(),
   getSubjects: () => read(allSubjects),
-  getSubject: (slug: string) =>
-    read(() => {
-      const subject = getSubject(slug);
-      if (!subject) throw new NotFoundError("Subject");
-      return { subject, topics: getTopics(slug) };
-    }),
+  getSubject: (slug: string) => getSubjectFn({ data: { slug } }),
   getLesson: (slug: string, topicId: string) =>
-    read(() => {
-      const lesson = getLesson(slug, topicId);
-      if (!lesson) throw new NotFoundError("Lesson");
-      return { lesson, topics: getTopics(slug), subject: getSubject(slug)! };
-    }),
+    getLessonFn({ data: { subjectSlug: slug, topicId } }),
+  markLessonComplete: (lessonId: string) => markLessonCompleteFn({ data: { lessonId } }),
   getAttendance: (year: number, month: number) =>
     read(() => ({
       summary: attendanceSummary,

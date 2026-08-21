@@ -1,4 +1,4 @@
-import { Link, createFileRoute, notFound } from "@tanstack/react-router";
+import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -20,7 +20,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { getLesson, getSubject, getTopics } from "@/data/curriculum";
+import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import type { Difficulty, Lesson } from "@/types";
 
@@ -32,22 +32,22 @@ interface LessonLoaderData {
   total: number;
   prev: string | null;
   next: string | null;
+  completed: boolean;
 }
 
 export const Route = createFileRoute("/_app/learning/$subject/$topicId")({
-  loader: ({ params }): LessonLoaderData => {
-    const lesson = getLesson(params.subject, params.topicId);
-    if (!lesson) throw notFound();
-    const topics = getTopics(params.subject);
+  loader: async ({ params }): Promise<LessonLoaderData> => {
+    const { lesson, topics, subject } = await api.getLesson(params.subject, params.topicId);
     const index = topics.findIndex((t) => t.id === params.topicId);
     return {
       lesson,
-      subjectName: getSubject(params.subject)?.name ?? params.subject,
+      subjectName: subject.name,
       difficulty: topics[index]?.difficulty ?? "Easy",
       position: index + 1,
       total: topics.length,
       prev: topics[index - 1]?.id ?? null,
       next: topics[index + 1]?.id ?? null,
+      completed: topics[index]?.status === "completed",
     };
   },
   head: ({ loaderData }) => {
@@ -89,12 +89,30 @@ function LessonNotFound() {
 
 function Page() {
   const { subject } = Route.useParams();
-  const { lesson, subjectName, difficulty, position, total, prev, next } =
+  const router = useRouter();
+  const { lesson, subjectName, difficulty, position, total, prev, next, completed } =
     Route.useLoaderData() as LessonLoaderData;
-  const [completed, setCompleted] = useState(false);
+  const [justCompleted, setJustCompleted] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [code, setCode] = useState(lesson.exercise.starter);
+
+  const isComplete = completed || justCompleted;
+
+  async function handleMarkComplete() {
+    setSaving(true);
+    try {
+      await api.markLessonComplete(lesson.id);
+      setJustCompleted(true);
+      toast.success("Lesson marked complete", { description: lesson.title });
+      await router.invalidate();
+    } catch {
+      toast.error("Couldn't save your progress. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   const score = lesson.quiz.reduce((n, q, i) => n + (answers[i] === q.answerIndex ? 1 : 0), 0);
 
@@ -127,19 +145,16 @@ function Page() {
           <p className="max-w-2xl text-sm text-muted-foreground">{lesson.intro}</p>
         </div>
         <Button
-          variant={completed ? "outline" : "default"}
-          onClick={() => {
-            setCompleted((v) => !v);
-            if (!completed)
-              toast.success("Lesson marked complete", { description: `+50 XP · ${lesson.title}` });
-          }}
+          variant={isComplete ? "outline" : "default"}
+          disabled={isComplete || saving}
+          onClick={handleMarkComplete}
         >
           <CheckCircle2 className="size-4" />
-          {completed ? "Completed" : "Mark as complete"}
+          {isComplete ? "Completed" : saving ? "Saving…" : "Mark as complete"}
         </Button>
       </div>
 
-      <Progress value={completed ? 100 : Math.round((position / total) * 100)} className="h-2" />
+      <Progress value={isComplete ? 100 : Math.round((position / total) * 100)} className="h-2" />
 
       <div className="grid gap-6 xl:grid-cols-[1.7fr_1fr]">
         <div className="space-y-6">
