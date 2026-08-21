@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import {
   CalendarCheck,
@@ -12,10 +13,10 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/shared/page-header";
 import { ProgressRing } from "@/components/shared/progress-ring";
 import { StatCard } from "@/components/shared/stat-card";
+import { ErrorState, ListSkeleton } from "@/components/shared/states";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { attendanceHistory, attendanceSummary, getMonthAttendance } from "@/data/attendance";
-import { upcomingClasses } from "@/data/student";
+import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import type { AttendanceStatus } from "@/types";
 
@@ -40,8 +41,9 @@ export const Route = createFileRoute("/_app/attendance")({
 });
 
 function Page() {
+  const queryClient = useQueryClient();
   const [monthOffset, setMonthOffset] = useState(0);
-  const [checkedIn, setCheckedIn] = useState(false);
+  const [checkingIn, setCheckingIn] = useState(false);
   const [filter, setFilter] = useState<"all" | "present" | "late" | "absent">("all");
 
   const today = new Date();
@@ -49,12 +51,37 @@ function Page() {
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
 
-  const monthMap = useMemo(() => getMonthAttendance(year, month), [year, month]);
+  const attendanceQuery = useQuery({
+    queryKey: ["attendance", year, month],
+    queryFn: () => api.getAttendance(year, month),
+  });
+  const upcomingQuery = useQuery({
+    queryKey: ["upcoming-classes"],
+    queryFn: api.getUpcomingClasses,
+  });
+
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const leadingBlanks = new Date(year, month, 1).getDay();
+  const monthMap = attendanceQuery.data?.month ?? {};
+  const summary = attendanceQuery.data?.summary ?? { rate: 0, attended: 0, late: 0, missed: 0 };
+  const history = useMemo(() => attendanceQuery.data?.history ?? [], [attendanceQuery.data]);
+  const filtered = history.filter((r) => filter === "all" || r.status === filter);
+  const upcoming = upcomingQuery.data ?? [];
 
-  const filtered = attendanceHistory.filter((r) => filter === "all" || r.status === filter);
-  const nextClass = upcomingClasses[0];
+  async function handleCheckIn() {
+    setCheckingIn(true);
+    try {
+      const result = await api.checkIn();
+      toast.success("Checked in", {
+        description: `${result.title}${result.status === "late" ? " (marked late)" : ""}`,
+      });
+      await queryClient.invalidateQueries({ queryKey: ["attendance"] });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Couldn't check in. Try again.");
+    } finally {
+      setCheckingIn(false);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -63,15 +90,9 @@ function Page() {
         title="Attendance"
         description="Track your class attendance and check in to today's session."
         actions={
-          <Button
-            disabled={checkedIn}
-            onClick={() => {
-              setCheckedIn(true);
-              toast.success("Checked in", { description: nextClass?.title ?? "Today's session" });
-            }}
-          >
+          <Button disabled={checkingIn} onClick={handleCheckIn}>
             <CalendarCheck className="size-4" />
-            {checkedIn ? "Checked in" : "Check in to today's class"}
+            {checkingIn ? "Checking in…" : "Check in to today's class"}
           </Button>
         }
       />
@@ -79,27 +100,27 @@ function Page() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="Attendance rate"
-          value={`${attendanceSummary.rate}%`}
+          value={`${summary.rate}%`}
           hint="This cohort"
           icon={CalendarCheck}
         />
         <StatCard
           label="Attended"
-          value={`${attendanceSummary.attended}`}
+          value={`${summary.attended}`}
           hint="Classes"
           icon={CheckCircle2}
           tone="success"
         />
         <StatCard
           label="Late"
-          value={`${attendanceSummary.late}`}
+          value={`${summary.late}`}
           hint="Arrivals"
           icon={Clock}
           tone="warning"
         />
         <StatCard
           label="Missed"
-          value={`${attendanceSummary.missed}`}
+          value={`${summary.missed}`}
           hint="Classes"
           icon={XCircle}
           tone="destructive"
@@ -176,9 +197,11 @@ function Page() {
 
         <section className="space-y-6">
           <div className="card-surface flex items-center gap-4 p-5">
-            <ProgressRing value={attendanceSummary.rate} size={84} label="Attendance" />
+            <ProgressRing value={summary.rate} size={84} label="Attendance" />
             <div>
-              <p className="text-sm font-semibold text-foreground">Great consistency</p>
+              <p className="text-sm font-semibold text-foreground">
+                {summary.rate >= 85 ? "Great consistency" : "Keep building your streak"}
+              </p>
               <p className="mt-1 text-sm text-muted-foreground">
                 Stay above 85% to remain eligible for cohort certification.
               </p>
@@ -187,24 +210,32 @@ function Page() {
 
           <div className="card-surface p-5">
             <h2 className="text-base font-semibold text-foreground">Upcoming classes</h2>
-            <ul className="mt-4 space-y-3">
-              {upcomingClasses.slice(0, 4).map((c) => (
-                <li
-                  key={c.id}
-                  className="flex items-start justify-between gap-3 rounded-lg border border-border p-3"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-foreground">{c.title}</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">
-                      {c.day} · {c.time} · {c.instructor}
-                    </p>
-                  </div>
-                  <Badge variant="outline" className="shrink-0">
-                    {c.mode}
-                  </Badge>
-                </li>
-              ))}
-            </ul>
+            {upcomingQuery.isPending ? (
+              <div className="mt-4">
+                <ListSkeleton count={3} />
+              </div>
+            ) : upcoming.length === 0 ? (
+              <p className="mt-4 text-sm text-muted-foreground">No upcoming classes scheduled.</p>
+            ) : (
+              <ul className="mt-4 space-y-3">
+                {upcoming.map((c) => (
+                  <li
+                    key={c.id}
+                    className="flex items-start justify-between gap-3 rounded-lg border border-border p-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-foreground">{c.title}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {c.day} · {c.time} · {c.instructor}
+                      </p>
+                    </div>
+                    <Badge variant="outline" className="shrink-0">
+                      {c.mode}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </section>
       </div>
@@ -227,21 +258,33 @@ function Page() {
           </div>
         </div>
 
-        <ul className="mt-4 divide-y divide-border">
-          {filtered.map((r) => (
-            <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-foreground">{r.className}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {r.date} · {r.time} · {r.instructor}
-                </p>
-              </div>
-              <Badge variant="outline" className={cn("capitalize", statusTone[r.status])}>
-                {r.status}
-              </Badge>
-            </li>
-          ))}
-        </ul>
+        {attendanceQuery.isError ? (
+          <div className="mt-4">
+            <ErrorState onRetry={() => attendanceQuery.refetch()} />
+          </div>
+        ) : attendanceQuery.isPending ? (
+          <div className="mt-4">
+            <ListSkeleton />
+          </div>
+        ) : filtered.length === 0 ? (
+          <p className="mt-4 text-sm text-muted-foreground">No attendance records yet.</p>
+        ) : (
+          <ul className="mt-4 divide-y divide-border">
+            {filtered.map((r) => (
+              <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-foreground">{r.className}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {r.date} · {r.time} · {r.instructor}
+                  </p>
+                </div>
+                <Badge variant="outline" className={cn("capitalize", statusTone[r.status])}>
+                  {r.status}
+                </Badge>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );

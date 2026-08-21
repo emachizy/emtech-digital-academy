@@ -1,4 +1,3 @@
-import { attendanceHistory, attendanceSummary, getMonthAttendance } from "@/data/attendance";
 import { allSubjects } from "@/data/curriculum";
 import {
   achievements,
@@ -9,7 +8,8 @@ import {
 } from "@/data/gamification";
 import { challenges, getChallenge } from "@/data/practice";
 import { getProject, projects } from "@/data/projects";
-import { activity, announcements, notifications, skills, upcomingClasses } from "@/data/student";
+import { activity, announcements, notifications, skills } from "@/data/student";
+import { checkInFn, getAttendanceFn, getUpcomingSessionsFn } from "./attendance.functions";
 import {
   getLessonFn,
   getSubjectFn,
@@ -21,9 +21,9 @@ import { NotFoundError, read, write } from "./client";
 
 export const api = {
   // Real, database-backed (see src/lib/api/*.functions.ts). Everything
-  // below getStudent/getLesson still reads from src/data/* mocks — wired up
-  // as their own domains (attendance, practice, projects, achievements,
-  // notifications) land in later phases.
+  // below getPortfolio still reads from src/data/* mocks — wired up as
+  // their own domains (practice, projects, achievements, notifications)
+  // land in later phases.
   getStudent: () => getStudentProfileFn(),
   getDashboard: () => getStudentProfileFn(),
   getTracks: () => getTracksFn(),
@@ -32,13 +32,9 @@ export const api = {
   getLesson: (slug: string, topicId: string) =>
     getLessonFn({ data: { subjectSlug: slug, topicId } }),
   markLessonComplete: (lessonId: string) => markLessonCompleteFn({ data: { lessonId } }),
-  getAttendance: (year: number, month: number) =>
-    read(() => ({
-      summary: attendanceSummary,
-      history: attendanceHistory,
-      month: getMonthAttendance(year, month),
-    })),
-  checkIn: (method: string) => write({ method, at: new Date().toISOString() }),
+  getAttendance: (year: number, month: number) => getAttendanceFn({ data: { year, month } }),
+  getUpcomingClasses: () => getUpcomingSessionsFn(),
+  checkIn: () => checkInFn(),
   getChallenges: () => read(challenges),
   getChallenge: (id: string) =>
     read(() => {
