@@ -3,6 +3,7 @@ import { leaderboards, portfolioSections } from "@/data/gamification";
 import { challenges, getChallenge } from "@/data/practice";
 import { activity, skills } from "@/data/student";
 import { getAchievementsFn, getCertificatesFn } from "./achievements.functions";
+import { assignMentorFn, getAdminOverviewFn, getCohortsFn, getMentorsFn } from "./admin.functions";
 import { checkInFn, getAttendanceFn, getUpcomingSessionsFn } from "./attendance.functions";
 import {
   getLessonFn,
@@ -66,6 +67,13 @@ export const api = {
       categories: { name: string; score: number }[];
       decision: "approved" | "changes_requested" | "rejected";
     }) => submitReviewFn({ data: params }),
+  },
+  admin: {
+    getOverview: () => getAdminOverviewFn(),
+    getCohorts: () => getCohortsFn(),
+    getMentors: () => getMentorsFn(),
+    assignMentor: (params: { cohortId: string; mentorProfileId: string | null }) =>
+      assignMentorFn({ data: params }),
   },
 };
 

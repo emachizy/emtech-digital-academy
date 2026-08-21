@@ -1,7 +1,42 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import {
+  CalendarCheck,
+  FolderKanban,
+  GraduationCap,
+  TrendingUp,
+  UserCog,
+  Users,
+} from "lucide-react";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/shared/page-header";
-import { EmptyState } from "@/components/shared/states";
+import { StatCard } from "@/components/shared/stat-card";
+import { ErrorState, ListSkeleton } from "@/components/shared/states";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { api } from "@/lib/api";
+import type { CohortSummary, MentorSummary } from "@/lib/api/admin.functions";
 import { roleHome } from "@/lib/permissions";
+import { initials } from "@/lib/utils";
+
+const UNASSIGNED = "unassigned";
 
 export const Route = createFileRoute("/_app/admin")({
   beforeLoad: ({ context }) => {
@@ -12,12 +47,9 @@ export const Route = createFileRoute("/_app/admin")({
   head: () => ({
     meta: [
       { title: "Administration — TechEdu" },
-      { name: "description", content: "Academy administration is prepared but not yet enabled." },
+      { name: "description", content: "Cohorts, mentors and platform-wide analytics." },
       { property: "og:title", content: "Administration — TechEdu" },
-      {
-        property: "og:description",
-        content: "Academy administration is prepared but not yet enabled.",
-      },
+      { property: "og:description", content: "Cohorts, mentors and platform-wide analytics." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -26,16 +58,231 @@ export const Route = createFileRoute("/_app/admin")({
 });
 
 function Page() {
+  const queryClient = useQueryClient();
+  const overviewQuery = useQuery({
+    queryKey: ["admin-overview"],
+    queryFn: api.admin.getOverview,
+  });
+  const cohortsQuery = useQuery({
+    queryKey: ["admin-cohorts"],
+    queryFn: api.admin.getCohorts,
+  });
+  const mentorsQuery = useQuery({
+    queryKey: ["admin-mentors"],
+    queryFn: api.admin.getMentors,
+  });
+  const [assigning, setAssigning] = useState<CohortSummary | null>(null);
+
+  const isPending = overviewQuery.isPending || cohortsQuery.isPending || mentorsQuery.isPending;
+  const isError = overviewQuery.isError || cohortsQuery.isError || mentorsQuery.isError;
+
+  if (isError) {
+    return (
+      <div className="space-y-6">
+        <PageHeader title="Administration" description="Cohorts, mentors and platform analytics." />
+        <ErrorState
+          onRetry={() => {
+            void overviewQuery.refetch();
+            void cohortsQuery.refetch();
+            void mentorsQuery.refetch();
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (isPending) {
+    return (
+      <div className="space-y-6">
+        <PageHeader title="Administration" description="Cohorts, mentors and platform analytics." />
+        <ListSkeleton />
+      </div>
+    );
+  }
+
+  const overview = overviewQuery.data;
+  const cohorts = cohortsQuery.data;
+  const mentors = mentorsQuery.data;
+
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Administration"
-        description="Academy administration is prepared but not yet enabled."
-      />
-      <EmptyState
-        title="Admin dashboard not enabled"
-        description="Cohorts, courses, mentors and analytics land here next."
+      <PageHeader title="Administration" description="Cohorts, mentors and platform analytics." />
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <StatCard label="Students" value={String(overview.totalStudents)} icon={GraduationCap} />
+        <StatCard label="Mentors" value={String(overview.totalMentors)} icon={UserCog} />
+        <StatCard label="Cohorts" value={String(overview.totalCohorts)} icon={Users} />
+        <StatCard
+          label="Pending reviews"
+          value={String(overview.pendingSubmissions)}
+          icon={FolderKanban}
+          tone={overview.pendingSubmissions ? "warning" : "primary"}
+        />
+        <StatCard
+          label="Avg. attendance"
+          value={`${overview.avgAttendanceRate}%`}
+          icon={CalendarCheck}
+        />
+        <StatCard
+          label="Avg. progress"
+          value={`${overview.avgProgress}%`}
+          icon={TrendingUp}
+          tone="electric"
+        />
+      </div>
+
+      <section className="card-surface p-5">
+        <h2 className="text-base font-semibold text-foreground">Cohorts</h2>
+        {cohorts.length === 0 ? (
+          <p className="mt-4 text-sm text-muted-foreground">No cohorts yet.</p>
+        ) : (
+          <ul className="mt-4 divide-y divide-border">
+            {cohorts.map((c) => (
+              <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-foreground">
+                    {c.name} <span className="text-muted-foreground">· {c.code}</span>
+                  </p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {c.periodLabel} · {c.studentCount} students
+                    {c.instructorName ? ` · Instructor: ${c.instructorName}` : ""}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  {c.mentorName ? (
+                    <Badge variant="secondary">{c.mentorName}</Badge>
+                  ) : (
+                    <Badge variant="outline">Unassigned</Badge>
+                  )}
+                  <Button size="sm" variant="outline" onClick={() => setAssigning(c)}>
+                    Assign mentor
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="card-surface p-5">
+        <h2 className="text-base font-semibold text-foreground">Mentors</h2>
+        {mentors.length === 0 ? (
+          <p className="mt-4 text-sm text-muted-foreground">No mentors yet.</p>
+        ) : (
+          <ul className="mt-4 divide-y divide-border">
+            {mentors.map((m) => (
+              <li key={m.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <Avatar className="size-9 border border-border">
+                    <AvatarFallback className="bg-primary-soft text-xs font-semibold text-primary">
+                      {initials(m.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-foreground">{m.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {m.cohortName ?? "No cohort assigned"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                  <span>{m.studentCount} students</span>
+                  <span>{m.pendingReviews} pending reviews</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <AssignMentorDialog
+        cohort={assigning}
+        mentors={mentors}
+        onClose={() => setAssigning(null)}
+        onSuccess={() => {
+          setAssigning(null);
+          void queryClient.invalidateQueries({ queryKey: ["admin-cohorts"] });
+          void queryClient.invalidateQueries({ queryKey: ["admin-mentors"] });
+        }}
       />
     </div>
+  );
+}
+
+function AssignMentorDialog({
+  cohort,
+  mentors,
+  onClose,
+  onSuccess,
+}: {
+  cohort: CohortSummary | null;
+  mentors: MentorSummary[];
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [selected, setSelected] = useState(UNASSIGNED);
+  const [saving, setSaving] = useState(false);
+
+  if (!cohort) return null;
+  const value = selected === UNASSIGNED && cohort.mentorId ? cohort.mentorId : selected;
+
+  async function handleSubmit() {
+    setSaving(true);
+    try {
+      await api.admin.assignMentor({
+        cohortId: cohort!.id,
+        mentorProfileId: value === UNASSIGNED ? null : value,
+      });
+      toast.success("Mentor assignment updated", { description: cohort!.name });
+      onSuccess();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Couldn't update assignment. Try again.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) {
+          setSelected(UNASSIGNED);
+          onClose();
+        }
+      }}
+    >
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Assign mentor</DialogTitle>
+          <DialogDescription>{cohort.name}</DialogDescription>
+        </DialogHeader>
+
+        <Select value={value} onValueChange={setSelected}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={UNASSIGNED}>Unassigned</SelectItem>
+            {mentors.map((m) => (
+              <SelectItem key={m.id} value={m.id}>
+                {m.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={saving}>
+            Cancel
+          </Button>
+          <Button onClick={() => void handleSubmit()} disabled={saving}>
+            {saving ? "Saving…" : "Save"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
