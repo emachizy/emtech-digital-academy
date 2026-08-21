@@ -1,8 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/states";
+import { roleHome } from "@/lib/permissions";
 
 export const Route = createFileRoute("/_app/mentor")({
+  beforeLoad: ({ context }) => {
+    if (context.auth.role !== "mentor") {
+      throw redirect({ to: roleHome[context.auth.role] });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Mentor Workspace — TechEdu" },

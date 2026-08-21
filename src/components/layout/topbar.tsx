@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { student } from "@/data/student";
 import { useSession } from "@/lib/session";
+import { initials } from "@/lib/utils";
 import { GlobalSearch } from "./global-search";
 import { NotificationsMenu } from "./notifications-menu";
 
@@ -24,7 +25,7 @@ export function Topbar({
   onToggleCollapse: () => void;
   onOpenMobileNav: () => void;
 }) {
-  const { theme, toggleTheme, signOut } = useSession();
+  const { theme, toggleTheme, signOut, user } = useSession();
   const navigate = useNavigate();
 
   return (
@@ -72,15 +73,15 @@ export function Topbar({
           >
             <Avatar className="size-9 border border-border">
               <AvatarFallback className="bg-primary-soft text-sm font-semibold text-primary">
-                {student.avatar}
+                {user ? initials(user.fullName) : "?"}
               </AvatarFallback>
             </Avatar>
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>
-            <p className="text-sm font-semibold">{student.name}</p>
-            <p className="text-xs font-normal text-muted-foreground">{student.studentId}</p>
+            <p className="text-sm font-semibold">{user?.fullName}</p>
+            <p className="text-xs font-normal text-muted-foreground">{user?.email}</p>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
@@ -93,8 +94,8 @@ export function Topbar({
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={() => {
-              signOut();
+            onClick={async () => {
+              await signOut();
               navigate({ to: "/", replace: true });
             }}
           >

@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { AiTutor } from "@/components/layout/ai-tutor";
 import { AppSidebar } from "@/components/layout/app-sidebar";
@@ -8,6 +8,13 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app")({
+  beforeLoad: ({ context, location }) => {
+    if (!context.auth) {
+      throw redirect({ to: "/login", search: { redirect: location.href } });
+    }
+    // Narrow `auth` to non-null for every child route's context.
+    return { auth: context.auth };
+  },
   component: AppLayout,
 });
 

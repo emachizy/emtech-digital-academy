@@ -1,34 +1,33 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import type { Permission, Role } from "@/types";
+import type { AuthUser } from "@/lib/auth/types";
+import { supabaseBrowser } from "@/lib/supabase/browser";
+import type { Permission } from "@/types";
 import { can, canAny } from "./permissions";
 
 export type Theme = "light" | "dark";
 
-interface SessionState {
-  role: Role;
-  signedIn: boolean;
+interface PreferencesState {
   theme: Theme;
   leaderboardOptIn: boolean;
   githubConnected: boolean;
   completedLessons: string[];
 }
 
-const STORAGE_KEY = "techedu.session";
+const STORAGE_KEY = "techedu.preferences";
 
-const defaultState: SessionState = {
-  role: "student",
-  signedIn: false,
+const defaultPreferences: PreferencesState = {
   theme: "light",
   leaderboardOptIn: true,
   githubConnected: false,
   completedLessons: [],
 };
 
-interface SessionContextValue extends SessionState {
+interface SessionContextValue extends PreferencesState {
   hydrated: boolean;
-  signIn: (role?: Role) => void;
-  signOut: () => void;
+  /** Resolved server-side from the session cookie; null when signed out. */
+  user: AuthUser | null;
+  signOut: () => Promise<void>;
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
   setLeaderboardOptIn: (value: boolean) => void;
@@ -41,14 +40,22 @@ interface SessionContextValue extends SessionState {
 
 const SessionContext = createContext<SessionContextValue | null>(null);
 
-export function SessionProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<SessionState>(defaultState);
+export function SessionProvider({
+  auth,
+  children,
+}: {
+  auth: AuthUser | null;
+  children: ReactNode;
+}) {
+  const [state, setState] = useState<PreferencesState>(defaultPreferences);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) setState({ ...defaultState, ...(JSON.parse(raw) as Partial<SessionState>) });
+      if (raw) {
+        setState({ ...defaultPreferences, ...(JSON.parse(raw) as Partial<PreferencesState>) });
+      }
     } catch {
       /* ignore corrupt storage */
     }
@@ -63,7 +70,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, [state, hydrated]);
 
   const patch = useCallback(
-    (next: Partial<SessionState>) => setState((prev) => ({ ...prev, ...next })),
+    (next: Partial<PreferencesState>) => setState((prev) => ({ ...prev, ...next })),
     [],
   );
 
@@ -71,8 +78,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     () => ({
       ...state,
       hydrated,
-      signIn: (role: Role = "student") => patch({ signedIn: true, role }),
-      signOut: () => patch({ signedIn: false }),
+      user: auth,
+      signOut: async () => {
+        await supabaseBrowser.auth.signOut();
+      },
       setTheme: (theme: Theme) => patch({ theme }),
       toggleTheme: () => patch({ theme: state.theme === "dark" ? "light" : "dark" }),
       setLeaderboardOptIn: (leaderboardOptIn: boolean) => patch({ leaderboardOptIn }),
@@ -85,10 +94,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             : [...prev.completedLessons, id],
         })),
       isLessonComplete: (id: string) => state.completedLessons.includes(id),
-      can: (permission: Permission) => can(state.role, permission),
-      canAny: (permissions: Permission[]) => canAny(state.role, permissions),
+      can: (permission: Permission) => (auth ? can(auth.role, permission) : false),
+      canAny: (permissions: Permission[]) => (auth ? canAny(auth.role, permissions) : false),
     }),
-    [state, hydrated, patch],
+    [state, hydrated, patch, auth],
   );
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

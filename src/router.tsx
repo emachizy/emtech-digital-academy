@@ -7,7 +7,9 @@ export const getRouter = () => {
 
   const router = createRouter({
     routeTree,
-    context: { queryClient },
+    // `auth` is a placeholder here — the root route's own beforeLoad
+    // resolves the real value from the session cookie on every request.
+    context: { queryClient, auth: null },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
   });
