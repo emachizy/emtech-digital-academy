@@ -1,5 +1,5 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { useState, type FormEvent } from "react";
 import { ArrowLeft, CheckCircle2, FileText, Github, Link2, Target, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/shared/page-header";
@@ -12,16 +12,13 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { getProject } from "@/data/projects";
+import { api } from "@/lib/api";
+import type { ProjectDetail } from "@/lib/api/projects.functions";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types";
 
 export const Route = createFileRoute("/_app/projects/$slug")({
-  loader: ({ params }) => {
-    const project = getProject(params.slug);
-    if (!project) throw notFound();
-    return { project };
-  },
+  loader: ({ params }): Promise<ProjectDetail> => api.getProject(params.slug),
   head: ({ loaderData }) => {
     const title = loaderData
       ? `${loaderData.project.title} — Project — TechEdu`
@@ -64,16 +61,35 @@ function ProjectNotFound() {
 
 function Page() {
   const { slug } = Route.useParams();
-  const project = getProject(slug);
-  const [repo, setRepo] = useState("");
-  const [live, setLive] = useState("");
-  const [notes, setNotes] = useState("");
-  const [submitted, setSubmitted] = useState(project?.status === "submitted");
+  const router = useRouter();
+  const { project, submission } = Route.useLoaderData();
+  const [repo, setRepo] = useState(submission?.repoUrl ?? "");
+  const [live, setLive] = useState(submission?.liveUrl ?? "");
+  const [notes, setNotes] = useState(submission?.notes ?? "");
+  const [saving, setSaving] = useState(false);
 
-  if (!project) return <ProjectNotFound />;
+  const status = project.status;
 
-  const status: Project["status"] =
-    submitted && project.status !== "reviewed" ? "submitted" : project.status;
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSaving(true);
+    try {
+      await api.submitProject({
+        slug,
+        repoUrl: repo,
+        ...(live ? { liveUrl: live } : {}),
+        ...(notes ? { notes } : {}),
+      });
+      toast.success("Project submitted", {
+        description: "Your mentor will review it within 48 hours.",
+      });
+      await router.invalidate();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Couldn't submit. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -178,16 +194,7 @@ function Page() {
                 </ul>
               </div>
 
-              <form
-                className="space-y-4"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setSubmitted(true);
-                  toast.success("Project submitted", {
-                    description: "Your mentor will review it within 48 hours.",
-                  });
-                }}
-              >
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="space-y-2">
                   <Label htmlFor="repo">GitHub repository URL</Label>
                   <div className="relative">
@@ -231,11 +238,11 @@ function Page() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                  <Button type="submit">
+                  <Button type="submit" disabled={saving}>
                     <Upload className="size-4" />
-                    {submitted ? "Resubmit project" : "Submit project"}
+                    {saving ? "Submitting…" : submission ? "Resubmit project" : "Submit project"}
                   </Button>
-                  {submitted ? (
+                  {status === "submitted" ? (
                     <span className="text-sm text-success">
                       Submitted — awaiting mentor review.
                     </span>

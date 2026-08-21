@@ -7,7 +7,6 @@ import {
   xpRules,
 } from "@/data/gamification";
 import { challenges, getChallenge } from "@/data/practice";
-import { getProject, projects } from "@/data/projects";
 import { activity, announcements, notifications, skills } from "@/data/student";
 import { checkInFn, getAttendanceFn, getUpcomingSessionsFn } from "./attendance.functions";
 import {
@@ -16,8 +15,9 @@ import {
   getTracksFn,
   markLessonCompleteFn,
 } from "./curriculum.functions";
+import { getProjectFn, getProjectsFn, submitProjectFn } from "./projects.functions";
 import { getStudentProfileFn } from "./student.functions";
-import { NotFoundError, read, write } from "./client";
+import { NotFoundError, read } from "./client";
 
 export const api = {
   // Real, database-backed (see src/lib/api/*.functions.ts). Everything
@@ -42,14 +42,10 @@ export const api = {
       if (!challenge) throw new NotFoundError("Challenge");
       return challenge;
     }),
-  getProjects: () => read(projects),
-  getProject: (slug: string) =>
-    read(() => {
-      const project = getProject(slug);
-      if (!project) throw new NotFoundError("Project");
-      return project;
-    }),
-  submitProject: (payload: Record<string, unknown>) => write(payload),
+  getProjects: () => getProjectsFn(),
+  getProject: (slug: string) => getProjectFn({ data: { slug } }),
+  submitProject: (params: { slug: string; repoUrl: string; liveUrl?: string; notes?: string }) =>
+    submitProjectFn({ data: params }),
   getSkills: () => read(skills),
   getActivity: () => read(activity),
   getNotifications: () => read(notifications),

@@ -1,16 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { ArrowRight, CheckCircle2, Clock, FolderKanban, Trophy } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
-import { EmptyState } from "@/components/shared/states";
+import { EmptyState, ErrorState, GridSkeleton } from "@/components/shared/states";
 import { StatCard } from "@/components/shared/stat-card";
 import { DifficultyBadge, XpBadge } from "@/components/shared/badges";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { projects } from "@/data/projects";
+import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types";
 
@@ -35,6 +36,12 @@ function Page() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | Project["status"]>("all");
 
+  const { data, isPending, isError, refetch } = useQuery({
+    queryKey: ["projects"],
+    queryFn: api.getProjects,
+  });
+  const projects = useMemo(() => data ?? [], [data]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return projects.filter(
@@ -45,7 +52,7 @@ function Page() {
           p.summary.toLowerCase().includes(q) ||
           p.skills.some((s) => s.toLowerCase().includes(q))),
     );
-  }, [query, filter]);
+  }, [query, filter, projects]);
 
   const reviewed = projects.filter((p) => p.status === "reviewed");
   const inProgress = projects.filter((p) => p.status === "in-progress");
@@ -111,7 +118,11 @@ function Page() {
         </div>
       </div>
 
-      {filtered.length === 0 ? (
+      {isError ? (
+        <ErrorState onRetry={() => refetch()} />
+      ) : isPending ? (
+        <GridSkeleton />
+      ) : filtered.length === 0 ? (
         <EmptyState
           title="No matching projects"
           description="Try a different search term or clear the status filter."
