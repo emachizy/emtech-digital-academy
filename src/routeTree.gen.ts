@@ -22,6 +22,7 @@ import { Route as AppMentorRouteImport } from './routes/_app.mentor'
 import { Route as AppPortfolioRouteImport } from './routes/_app.portfolio'
 import { Route as AppProfileRouteImport } from './routes/_app.profile'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as AppLearningIndexRouteImport } from './routes/_app.learning.index'
 import { Route as AppPracticeIndexRouteImport } from './routes/_app.practice.index'
 import { Route as AppPracticeChallengeIdRouteImport } from './routes/_app.practice.$challengeId'
@@ -94,6 +95,11 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
+const PSlugRoute = PSlugRouteImport.update({
+  id: '/p/$slug',
+  path: '/p/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppLearningIndexRoute = AppLearningIndexRouteImport.update({
   id: '/learning/',
   path: '/learning/',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/portfolio': typeof AppPortfolioRoute
   '/profile': typeof AppProfileRoute
   '/settings': typeof AppSettingsRoute
+  '/p/$slug': typeof PSlugRoute
   '/practice/$challengeId': typeof AppPracticeChallengeIdRoute
   '/projects/$slug': typeof AppProjectsSlugRoute
   '/learning/': typeof AppLearningIndexRoute
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/portfolio': typeof AppPortfolioRoute
   '/profile': typeof AppProfileRoute
   '/settings': typeof AppSettingsRoute
+  '/p/$slug': typeof PSlugRoute
   '/practice/$challengeId': typeof AppPracticeChallengeIdRoute
   '/projects/$slug': typeof AppProjectsSlugRoute
   '/learning': typeof AppLearningIndexRoute
@@ -188,6 +196,7 @@ export interface FileRoutesById {
   '/_app/portfolio': typeof AppPortfolioRoute
   '/_app/profile': typeof AppProfileRoute
   '/_app/settings': typeof AppSettingsRoute
+  '/p/$slug': typeof PSlugRoute
   '/_app/practice/$challengeId': typeof AppPracticeChallengeIdRoute
   '/_app/projects/$slug': typeof AppProjectsSlugRoute
   '/_app/learning/': typeof AppLearningIndexRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/portfolio'
     | '/profile'
     | '/settings'
+    | '/p/$slug'
     | '/practice/$challengeId'
     | '/projects/$slug'
     | '/learning/'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/portfolio'
     | '/profile'
     | '/settings'
+    | '/p/$slug'
     | '/practice/$challengeId'
     | '/projects/$slug'
     | '/learning'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/_app/portfolio'
     | '/_app/profile'
     | '/_app/settings'
+    | '/p/$slug'
     | '/_app/practice/$challengeId'
     | '/_app/projects/$slug'
     | '/_app/learning/'
@@ -268,6 +280,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  PSlugRoute: typeof PSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -362,6 +375,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings'
       preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/p/$slug': {
+      id: '/p/$slug'
+      path: '/p/$slug'
+      fullPath: '/p/$slug'
+      preLoaderRoute: typeof PSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_app/learning/': {
       id: '/_app/learning/'
@@ -460,6 +480,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  PSlugRoute: PSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

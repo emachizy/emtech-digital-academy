@@ -1,5 +1,5 @@
 import { allSubjects } from "@/data/curriculum";
-import { leaderboards, portfolioSections } from "@/data/gamification";
+import { leaderboards } from "@/data/gamification";
 import { challenges, getChallenge } from "@/data/practice";
 import { activity, skills } from "@/data/student";
 import { getAchievementsFn, getCertificatesFn } from "./achievements.functions";
@@ -17,15 +17,17 @@ import {
   markAllNotificationsReadFn,
   markNotificationReadFn,
 } from "./notifications.functions";
+import { getMyPortfolioFn, getPublicPortfolioFn, updateMyPortfolioFn } from "./portfolio.functions";
 import { getProjectFn, getProjectsFn, submitProjectFn } from "./projects.functions";
 import { getStudentProfileFn } from "./student.functions";
 import { NotFoundError, read } from "./client";
 
 export const api = {
-  // Real, database-backed (see src/lib/api/*.functions.ts). Everything
-  // below getPortfolio still reads from src/data/* mocks — wired up as
-  // their own domains (practice, projects, achievements, notifications)
-  // land in later phases.
+  // Real, database-backed (see src/lib/api/*.functions.ts) except
+  // getSubjects, getChallenge(s), getSkills, getActivity and getLeaderboard,
+  // which still read from src/data/* mocks — practice challenges, the skills
+  // radar and the leaderboard are out of scope for this MVP (brief section
+  // 39 excludes the gamification/leaderboard engine).
   getStudent: () => getStudentProfileFn(),
   getDashboard: () => getStudentProfileFn(),
   getTracks: () => getTracksFn(),
@@ -56,7 +58,14 @@ export const api = {
   getAchievements: () => getAchievementsFn(),
   getCertificates: () => getCertificatesFn(),
   getLeaderboard: (range: "weekly" | "monthly" | "all-time") => read(leaderboards[range]),
-  getPortfolio: () => read(portfolioSections),
+  getPortfolio: () => getMyPortfolioFn(),
+  updatePortfolio: (params: {
+    headline?: string;
+    bio?: string;
+    isPublic: boolean;
+    publicSlug?: string;
+  }) => updateMyPortfolioFn({ data: params }),
+  getPublicPortfolio: (slug: string) => getPublicPortfolioFn({ data: { slug } }),
   mentor: {
     getOverview: () => getMentorOverviewFn(),
     getPendingSubmissions: () => getPendingSubmissionsFn(),
