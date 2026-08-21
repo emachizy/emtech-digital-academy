@@ -1,4 +1,5 @@
 import { createMiddleware } from "@tanstack/react-start";
+import { ForbiddenError, UnauthorizedError } from "@/lib/api/errors";
 import { createRequestSupabase } from "@/lib/supabase/request.server";
 import type { Role } from "@/types";
 
@@ -17,14 +18,14 @@ export const authMiddleware = createMiddleware({ type: "function" }).server(asyn
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Unauthorized");
+  if (!user) throw new UnauthorizedError();
 
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .single();
-  if (!profile) throw new Error("Unauthorized");
+  if (!profile) throw new UnauthorizedError();
 
   return next({ context: { userId: user.id, role: profile.role as Role, supabase } });
 });
@@ -35,7 +36,7 @@ export function requireRole(role: Role | Role[]) {
   return createMiddleware({ type: "function" })
     .middleware([authMiddleware])
     .server(async ({ next, context }) => {
-      if (!allowed.includes(context.role)) throw new Error("Forbidden");
+      if (!allowed.includes(context.role)) throw new ForbiddenError();
       return next();
     });
 }

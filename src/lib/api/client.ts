@@ -17,9 +17,4 @@ export function write<T>(value: T, latency = 600): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(value), latency));
 }
 
-export class NotFoundError extends Error {
-  constructor(what: string) {
-    super(`${what} not found`);
-    this.name = "NotFoundError";
-  }
-}
+export { NotFoundError } from "./errors";
