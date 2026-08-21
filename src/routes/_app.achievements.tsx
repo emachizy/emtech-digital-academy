@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import * as Icons from "lucide-react";
 import { Award, Flame, Lock, Sparkles, Star, Trophy, Zap, Download } from "lucide-react";
@@ -7,12 +8,13 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/shared/stat-card";
 import { ProgressRing } from "@/components/shared/progress-ring";
+import { ErrorState, ListSkeleton } from "@/components/shared/states";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { achievements, certificates, leaderboards, xpRules } from "@/data/gamification";
-import { student } from "@/data/student";
+import { leaderboards, xpRules } from "@/data/gamification";
+import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/achievements")({
@@ -41,6 +43,48 @@ function BadgeIcon({ name, className }: { name: string; className?: string }) {
 
 function Page() {
   const [filter, setFilter] = useState<Filter>("all");
+
+  const studentQuery = useQuery({ queryKey: ["student"], queryFn: api.getStudent });
+  const achievementsQuery = useQuery({ queryKey: ["achievements"], queryFn: api.getAchievements });
+  const certificatesQuery = useQuery({ queryKey: ["certificates"], queryFn: api.getCertificates });
+
+  const isPending =
+    studentQuery.isPending || achievementsQuery.isPending || certificatesQuery.isPending;
+  const isError = studentQuery.isError || achievementsQuery.isError || certificatesQuery.isError;
+
+  if (isError) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="Achievements"
+          description="Badges, XP, levels and certificates you have earned."
+        />
+        <ErrorState
+          onRetry={() => {
+            void studentQuery.refetch();
+            void achievementsQuery.refetch();
+            void certificatesQuery.refetch();
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (isPending) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="Achievements"
+          description="Badges, XP, levels and certificates you have earned."
+        />
+        <ListSkeleton />
+      </div>
+    );
+  }
+
+  const student = studentQuery.data;
+  const achievements = achievementsQuery.data;
+  const certificates = certificatesQuery.data;
 
   const earned = achievements.filter((a) => a.earned);
   const levelPercent = Math.round((student.xp / student.xpToNextLevel) * 100);

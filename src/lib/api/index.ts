@@ -1,13 +1,8 @@
 import { allSubjects } from "@/data/curriculum";
-import {
-  achievements,
-  certificates,
-  leaderboards,
-  portfolioSections,
-  xpRules,
-} from "@/data/gamification";
+import { leaderboards, portfolioSections } from "@/data/gamification";
 import { challenges, getChallenge } from "@/data/practice";
-import { activity, announcements, notifications, skills } from "@/data/student";
+import { activity, skills } from "@/data/student";
+import { getAchievementsFn, getCertificatesFn } from "./achievements.functions";
 import { checkInFn, getAttendanceFn, getUpcomingSessionsFn } from "./attendance.functions";
 import {
   getLessonFn,
@@ -15,6 +10,11 @@ import {
   getTracksFn,
   markLessonCompleteFn,
 } from "./curriculum.functions";
+import {
+  getNotificationsFn,
+  markAllNotificationsReadFn,
+  markNotificationReadFn,
+} from "./notifications.functions";
 import { getProjectFn, getProjectsFn, submitProjectFn } from "./projects.functions";
 import { getStudentProfileFn } from "./student.functions";
 import { NotFoundError, read } from "./client";
@@ -48,9 +48,11 @@ export const api = {
     submitProjectFn({ data: params }),
   getSkills: () => read(skills),
   getActivity: () => read(activity),
-  getNotifications: () => read(notifications),
-  getAchievements: () => read({ achievements, xpRules }),
-  getCertificates: () => read(certificates),
+  getNotifications: () => getNotificationsFn(),
+  markNotificationRead: (id: string) => markNotificationReadFn({ data: { id } }),
+  markAllNotificationsRead: () => markAllNotificationsReadFn(),
+  getAchievements: () => getAchievementsFn(),
+  getCertificates: () => getCertificatesFn(),
   getLeaderboard: (range: "weekly" | "monthly" | "all-time") => read(leaderboards[range]),
   getPortfolio: () => read(portfolioSections),
 };
