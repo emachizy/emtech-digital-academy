@@ -10,6 +10,7 @@ import {
   getTracksFn,
   markLessonCompleteFn,
 } from "./curriculum.functions";
+import { getMentorOverviewFn, getPendingSubmissionsFn, submitReviewFn } from "./mentor.functions";
 import {
   getNotificationsFn,
   markAllNotificationsReadFn,
@@ -55,6 +56,17 @@ export const api = {
   getCertificates: () => getCertificatesFn(),
   getLeaderboard: (range: "weekly" | "monthly" | "all-time") => read(leaderboards[range]),
   getPortfolio: () => read(portfolioSections),
+  mentor: {
+    getOverview: () => getMentorOverviewFn(),
+    getPendingSubmissions: () => getPendingSubmissionsFn(),
+    submitReview: (params: {
+      submissionId: string;
+      score: number;
+      comment?: string;
+      categories: { name: string; score: number }[];
+      decision: "approved" | "changes_requested" | "rejected";
+    }) => submitReviewFn({ data: params }),
+  },
 };
 
 export { NotFoundError };
