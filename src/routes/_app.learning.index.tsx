@@ -12,7 +12,10 @@ export const Route = createFileRoute("/_app/learning/")({
       { title: "Learning — TechEdu" },
       { name: "description", content: "Your Frontend Development track, subject by subject." },
       { property: "og:title", content: "Learning — TechEdu" },
-      { property: "og:description", content: "Your Frontend Development track, subject by subject." },
+      {
+        property: "og:description",
+        content: "Your Frontend Development track, subject by subject.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

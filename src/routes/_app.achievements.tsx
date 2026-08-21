@@ -2,16 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import * as Icons from "lucide-react";
-import {
-  Award,
-  Flame,
-  Lock,
-  Sparkles,
-  Star,
-  Trophy,
-  Zap,
-  Download,
-} from "lucide-react";
+import { Award, Flame, Lock, Sparkles, Star, Trophy, Zap, Download } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/shared/stat-card";
@@ -30,7 +21,10 @@ export const Route = createFileRoute("/_app/achievements")({
       { title: "Achievements — TechEdu" },
       { name: "description", content: "Badges, XP, levels and certificates you have earned." },
       { property: "og:title", content: "Achievements — TechEdu" },
-      { property: "og:description", content: "Badges, XP, levels and certificates you have earned." },
+      {
+        property: "og:description",
+        content: "Badges, XP, levels and certificates you have earned.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -63,10 +57,34 @@ function Page() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Total XP" value={student.xp.toLocaleString()} hint={`Level ${student.level} · ${student.levelTitle}`} icon={Zap} tone="primary" />
-        <StatCard label="Badges earned" value={`${earned.length}/${achievements.length}`} hint="Keep going to unlock more" icon={Award} tone="electric" />
-        <StatCard label="Current streak" value={`${student.streak} days`} hint="Learn daily to extend it" icon={Flame} tone="warning" />
-        <StatCard label="Certificates" value={`${completedCerts.length}/${certificates.length}`} hint="Issued by TechEdu Academy" icon={Star} tone="success" />
+        <StatCard
+          label="Total XP"
+          value={student.xp.toLocaleString()}
+          hint={`Level ${student.level} · ${student.levelTitle}`}
+          icon={Zap}
+          tone="primary"
+        />
+        <StatCard
+          label="Badges earned"
+          value={`${earned.length}/${achievements.length}`}
+          hint="Keep going to unlock more"
+          icon={Award}
+          tone="electric"
+        />
+        <StatCard
+          label="Current streak"
+          value={`${student.streak} days`}
+          hint="Learn daily to extend it"
+          icon={Flame}
+          tone="warning"
+        />
+        <StatCard
+          label="Certificates"
+          value={`${completedCerts.length}/${certificates.length}`}
+          hint="Issued by TechEdu Academy"
+          icon={Star}
+          tone="success"
+        />
       </div>
 
       <div className="card-surface flex flex-col gap-6 p-5 sm:flex-row sm:items-center">
@@ -76,7 +94,9 @@ function Page() {
             <h2 className="text-lg font-semibold text-foreground">
               Level {student.level} — {student.levelTitle}
             </h2>
-            <Badge variant="secondary">{student.xpToNextLevel - student.xp} XP to level {student.level + 1}</Badge>
+            <Badge variant="secondary">
+              {student.xpToNextLevel - student.xp} XP to level {student.level + 1}
+            </Badge>
           </div>
           <Progress value={levelPercent} className="h-2" />
           <p className="text-sm text-muted-foreground">
@@ -113,10 +133,7 @@ function Page() {
                 key={a.id}
                 whileHover={{ y: -3 }}
                 transition={{ type: "spring", stiffness: 320, damping: 24 }}
-                className={cn(
-                  "card-surface flex gap-3 p-4",
-                  !a.earned && "opacity-70",
-                )}
+                className={cn("card-surface flex gap-3 p-4", !a.earned && "opacity-70")}
               >
                 <span
                   className={cn(
@@ -124,7 +141,11 @@ function Page() {
                     a.earned ? "bg-primary-soft text-primary" : "bg-muted text-muted-foreground",
                   )}
                 >
-                  {a.earned ? <BadgeIcon name={a.icon} className="size-5" /> : <Lock className="size-5" />}
+                  {a.earned ? (
+                    <BadgeIcon name={a.icon} className="size-5" />
+                  ) : (
+                    <Lock className="size-5" />
+                  )}
                 </span>
                 <div className="min-w-0">
                   <p className="font-medium text-foreground">{a.name}</p>
@@ -176,7 +197,11 @@ function Page() {
               <TabsTrigger value="all-time">All time</TabsTrigger>
             </TabsList>
             {(Object.keys(leaderboards) as Array<keyof typeof leaderboards>).map((key) => (
-              <TabsContent key={key} value={key} className="card-surface divide-y divide-border p-0">
+              <TabsContent
+                key={key}
+                value={key}
+                className="card-surface divide-y divide-border p-0"
+              >
                 {leaderboards[key].map((e) => (
                   <div
                     key={e.rank}
@@ -185,20 +210,26 @@ function Page() {
                       e.isCurrentUser && "bg-primary-soft/60",
                     )}
                   >
-                    <span className="w-6 text-sm font-semibold text-muted-foreground">#{e.rank}</span>
+                    <span className="w-6 text-sm font-semibold text-muted-foreground">
+                      #{e.rank}
+                    </span>
                     <span className="flex size-9 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
                       {e.avatar}
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-foreground">
                         {e.name}
-                        {e.isCurrentUser ? <span className="ml-2 text-xs text-primary">You</span> : null}
+                        {e.isCurrentUser ? (
+                          <span className="ml-2 text-xs text-primary">You</span>
+                        ) : null}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {e.projects} projects · {e.streak} day streak
                       </p>
                     </div>
-                    <span className="text-sm font-semibold text-foreground">{e.xp.toLocaleString()} XP</span>
+                    <span className="text-sm font-semibold text-foreground">
+                      {e.xp.toLocaleString()} XP
+                    </span>
                   </div>
                 ))}
               </TabsContent>

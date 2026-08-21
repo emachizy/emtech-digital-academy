@@ -23,9 +23,15 @@ export const Route = createFileRoute("/_app/attendance")({
   head: () => ({
     meta: [
       { title: "Attendance — TechEdu" },
-      { name: "description", content: "Track your class attendance and check in to today's session." },
+      {
+        name: "description",
+        content: "Track your class attendance and check in to today's session.",
+      },
       { property: "og:title", content: "Attendance — TechEdu" },
-      { property: "og:description", content: "Track your class attendance and check in to today's session." },
+      {
+        property: "og:description",
+        content: "Track your class attendance and check in to today's session.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -71,10 +77,33 @@ function Page() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Attendance rate" value={`${attendanceSummary.rate}%`} hint="This cohort" icon={CalendarCheck} />
-        <StatCard label="Attended" value={`${attendanceSummary.attended}`} hint="Classes" icon={CheckCircle2} tone="success" />
-        <StatCard label="Late" value={`${attendanceSummary.late}`} hint="Arrivals" icon={Clock} tone="warning" />
-        <StatCard label="Missed" value={`${attendanceSummary.missed}`} hint="Classes" icon={XCircle} tone="destructive" />
+        <StatCard
+          label="Attendance rate"
+          value={`${attendanceSummary.rate}%`}
+          hint="This cohort"
+          icon={CalendarCheck}
+        />
+        <StatCard
+          label="Attended"
+          value={`${attendanceSummary.attended}`}
+          hint="Classes"
+          icon={CheckCircle2}
+          tone="success"
+        />
+        <StatCard
+          label="Late"
+          value={`${attendanceSummary.late}`}
+          hint="Arrivals"
+          icon={Clock}
+          tone="warning"
+        />
+        <StatCard
+          label="Missed"
+          value={`${attendanceSummary.missed}`}
+          hint="Classes"
+          icon={XCircle}
+          tone="destructive"
+        />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
@@ -84,7 +113,12 @@ function Page() {
               {cursor.toLocaleString("en-US", { month: "long", year: "numeric" })}
             </h2>
             <div className="flex items-center gap-1">
-              <Button variant="outline" size="icon" aria-label="Previous month" onClick={() => setMonthOffset((v) => v - 1)}>
+              <Button
+                variant="outline"
+                size="icon"
+                aria-label="Previous month"
+                onClick={() => setMonthOffset((v) => v - 1)}
+              >
                 <ChevronLeft className="size-4" />
               </Button>
               <Button
@@ -113,8 +147,7 @@ function Page() {
             {Array.from({ length: daysInMonth }).map((_, i) => {
               const day = i + 1;
               const status = monthMap[day] ?? "none";
-              const isToday =
-                monthOffset === 0 && day === today.getDate();
+              const isToday = monthOffset === 0 && day === today.getDate();
               return (
                 <div
                   key={day}
@@ -156,7 +189,10 @@ function Page() {
             <h2 className="text-base font-semibold text-foreground">Upcoming classes</h2>
             <ul className="mt-4 space-y-3">
               {upcomingClasses.slice(0, 4).map((c) => (
-                <li key={c.id} className="flex items-start justify-between gap-3 rounded-lg border border-border p-3">
+                <li
+                  key={c.id}
+                  className="flex items-start justify-between gap-3 rounded-lg border border-border p-3"
+                >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-foreground">{c.title}</p>
                     <p className="mt-0.5 text-xs text-muted-foreground">

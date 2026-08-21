@@ -33,7 +33,9 @@ function AppLayout() {
         </SheetContent>
       </Sheet>
 
-      <div className={cn("transition-[padding] duration-300", collapsed ? "lg:pl-[76px]" : "lg:pl-64")}>
+      <div
+        className={cn("transition-[padding] duration-300", collapsed ? "lg:pl-[76px]" : "lg:pl-64")}
+      >
         <Topbar
           collapsed={collapsed}
           onToggleCollapse={() => setCollapsed((v) => !v)}

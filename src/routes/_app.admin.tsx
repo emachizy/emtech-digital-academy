@@ -8,7 +8,10 @@ export const Route = createFileRoute("/_app/admin")({
       { title: "Administration — TechEdu" },
       { name: "description", content: "Academy administration is prepared but not yet enabled." },
       { property: "og:title", content: "Administration — TechEdu" },
-      { property: "og:description", content: "Academy administration is prepared but not yet enabled." },
+      {
+        property: "og:description",
+        content: "Academy administration is prepared but not yet enabled.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -19,8 +22,14 @@ export const Route = createFileRoute("/_app/admin")({
 function Page() {
   return (
     <div className="space-y-6">
-      <PageHeader title="Administration" description="Academy administration is prepared but not yet enabled." />
-      <EmptyState title="Admin dashboard not enabled" description="Cohorts, courses, mentors and analytics land here next." />
+      <PageHeader
+        title="Administration"
+        description="Academy administration is prepared but not yet enabled."
+      />
+      <EmptyState
+        title="Admin dashboard not enabled"
+        description="Cohorts, courses, mentors and analytics land here next."
+      />
     </div>
   );
 }

@@ -53,10 +53,7 @@ export const Route = createFileRoute("/_app/learning/$subject/$topicId")({
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [
-          { title: "Lesson unavailable — TechEdu" },
-          { name: "robots", content: "noindex" },
-        ],
+        meta: [{ title: "Lesson unavailable — TechEdu" }, { name: "robots", content: "noindex" }],
       };
     }
     const title = `${loaderData.lesson.title} — ${loaderData.subjectName} — TechEdu`;
@@ -92,7 +89,8 @@ function LessonNotFound() {
 
 function Page() {
   const { subject } = Route.useParams();
-  const { lesson, subjectName, difficulty, position, total, prev, next } = Route.useLoaderData() as LessonLoaderData;
+  const { lesson, subjectName, difficulty, position, total, prev, next } =
+    Route.useLoaderData() as LessonLoaderData;
   const [completed, setCompleted] = useState(false);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -132,7 +130,8 @@ function Page() {
           variant={completed ? "outline" : "default"}
           onClick={() => {
             setCompleted((v) => !v);
-            if (!completed) toast.success("Lesson marked complete", { description: `+50 XP · ${lesson.title}` });
+            if (!completed)
+              toast.success("Lesson marked complete", { description: `+50 XP · ${lesson.title}` });
           }}
         >
           <CheckCircle2 className="size-4" />
@@ -194,7 +193,9 @@ function Page() {
                 aria-label="Exercise code editor"
               />
               <div className="flex flex-wrap gap-2">
-                <Button onClick={() => toast.success("Nice work — solution saved")}>Run &amp; save</Button>
+                <Button onClick={() => toast.success("Nice work — solution saved")}>
+                  Run &amp; save
+                </Button>
                 <Button variant="outline" onClick={() => setCode(lesson.exercise.starter)}>
                   <RotateCcw className="size-4" /> Reset
                 </Button>
@@ -274,10 +275,16 @@ function Page() {
                     className="flex w-full items-center gap-3 rounded-lg border border-border p-3 text-left transition-colors hover:bg-accent"
                   >
                     <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary">
-                      {r.type === "Download" ? <Download className="size-4" /> : <FileText className="size-4" />}
+                      {r.type === "Download" ? (
+                        <Download className="size-4" />
+                      ) : (
+                        <FileText className="size-4" />
+                      )}
                     </span>
                     <span className="min-w-0">
-                      <span className="block truncate text-sm font-medium text-foreground">{r.label}</span>
+                      <span className="block truncate text-sm font-medium text-foreground">
+                        {r.label}
+                      </span>
                       <span className="block text-xs text-muted-foreground">{r.type}</span>
                     </span>
                   </button>

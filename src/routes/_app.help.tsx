@@ -20,7 +20,10 @@ function Page() {
   return (
     <div className="space-y-6">
       <PageHeader title="Help" description="Guides, FAQs and how to reach your mentor." />
-      <EmptyState title="No open support requests" description="Ask your mentor a question and it will show up here." />
+      <EmptyState
+        title="No open support requests"
+        description="Ask your mentor a question and it will show up here."
+      />
     </div>
   );
 }

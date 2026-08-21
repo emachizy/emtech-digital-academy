@@ -39,7 +39,9 @@ export function StatCard({
           <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
         </div>
-        <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg", tones[tone])}>
+        <span
+          className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg", tones[tone])}
+        >
           <Icon className="size-4.5" />
         </span>
       </div>

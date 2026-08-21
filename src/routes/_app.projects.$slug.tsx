@@ -1,14 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import {
-  ArrowLeft,
-  CheckCircle2,
-  FileText,
-  Github,
-  Link2,
-  Target,
-  Upload,
-} from "lucide-react";
+import { ArrowLeft, CheckCircle2, FileText, Github, Link2, Target, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/states";
@@ -31,7 +23,9 @@ export const Route = createFileRoute("/_app/projects/$slug")({
     return { project };
   },
   head: ({ loaderData }) => {
-    const title = loaderData ? `${loaderData.project.title} — Project — TechEdu` : "Project — TechEdu";
+    const title = loaderData
+      ? `${loaderData.project.title} — Project — TechEdu`
+      : "Project — TechEdu";
     const description = loaderData
       ? loaderData.project.summary
       : "Requirements, submission and mentor feedback.";
@@ -78,7 +72,8 @@ function Page() {
 
   if (!project) return <ProjectNotFound />;
 
-  const status: Project["status"] = submitted && project.status !== "reviewed" ? "submitted" : project.status;
+  const status: Project["status"] =
+    submitted && project.status !== "reviewed" ? "submitted" : project.status;
 
   return (
     <div className="space-y-6">
@@ -109,7 +104,9 @@ function Page() {
           <section className="card-surface p-5">
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium text-foreground">Progress</span>
-              <span className="text-muted-foreground">{project.progress}% · due {project.deadline}</span>
+              <span className="text-muted-foreground">
+                {project.progress}% · due {project.deadline}
+              </span>
             </div>
             <Progress value={project.progress} className="mt-3 h-2" />
           </section>
@@ -124,7 +121,9 @@ function Page() {
             <TabsContent value="brief" className="mt-5 space-y-6">
               <div>
                 <h2 className="text-base font-semibold text-foreground">Overview</h2>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{project.overview}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {project.overview}
+                </p>
               </div>
 
               <div>
@@ -237,7 +236,9 @@ function Page() {
                     {submitted ? "Resubmit project" : "Submit project"}
                   </Button>
                   {submitted ? (
-                    <span className="text-sm text-success">Submitted — awaiting mentor review.</span>
+                    <span className="text-sm text-success">
+                      Submitted — awaiting mentor review.
+                    </span>
                   ) : null}
                 </div>
               </form>

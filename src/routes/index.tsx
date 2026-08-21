@@ -6,9 +6,17 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "TechEdu — Tech Academy Operating System — TechEdu" },
-      { name: "description", content: "TechEdu is the operating system for modern tech academies: tracks, lessons, attendance, practice labs, projects and portfolios in one place." },
+      {
+        name: "description",
+        content:
+          "TechEdu is the operating system for modern tech academies: tracks, lessons, attendance, practice labs, projects and portfolios in one place.",
+      },
       { property: "og:title", content: "TechEdu — Tech Academy Operating System — TechEdu" },
-      { property: "og:description", content: "TechEdu is the operating system for modern tech academies: tracks, lessons, attendance, practice labs, projects and portfolios in one place." },
+      {
+        property: "og:description",
+        content:
+          "TechEdu is the operating system for modern tech academies: tracks, lessons, attendance, practice labs, projects and portfolios in one place.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

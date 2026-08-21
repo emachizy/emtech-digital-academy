@@ -56,7 +56,12 @@ function Page() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Challenges" value={`${challenges.length}`} hint="Available now" icon={Braces} />
+        <StatCard
+          label="Challenges"
+          value={`${challenges.length}`}
+          hint="Available now"
+          icon={Braces}
+        />
         <StatCard
           label="Completed"
           value={`${completed.length}`}
@@ -64,8 +69,20 @@ function Page() {
           icon={CheckCircle2}
           tone="success"
         />
-        <StatCard label="XP earned" value={`${earnedXp}`} hint="From practice" icon={Trophy} tone="electric" />
-        <StatCard label="Practice streak" value="12 days" hint="Keep it alive" icon={Flame} tone="warning" />
+        <StatCard
+          label="XP earned"
+          value={`${earnedXp}`}
+          hint="From practice"
+          icon={Trophy}
+          tone="electric"
+        />
+        <StatCard
+          label="Practice streak"
+          value="12 days"
+          hint="Keep it alive"
+          icon={Flame}
+          tone="warning"
+        />
       </div>
 
       {daily ? (
@@ -154,7 +171,10 @@ function Page() {
               <div className="flex items-start justify-between gap-3">
                 <h3 className="text-base font-semibold text-foreground">{c.title}</h3>
                 {c.completed ? (
-                  <Badge variant="outline" className="shrink-0 border-success/30 bg-success/10 text-success">
+                  <Badge
+                    variant="outline"
+                    className="shrink-0 border-success/30 bg-success/10 text-success"
+                  >
                     Solved
                   </Badge>
                 ) : null}

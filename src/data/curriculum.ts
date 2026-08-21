@@ -115,8 +115,7 @@ export const tracks: Track[] = [
   {
     id: "trk_frontend",
     name: "Frontend Development",
-    description:
-      "From semantic markup to production React apps. The core track for Cohort 2026-A.",
+    description: "From semantic markup to production React apps. The core track for Cohort 2026-A.",
     progress: 72,
     subjects,
   },

@@ -34,7 +34,9 @@ function SubjectPage() {
         eyebrow="Subject"
         title={data?.subject.name ?? "Loading…"}
         description={data?.subject.description ?? ""}
-        actions={data ? <ProgressRing value={data.subject.progress} label="Subject progress" /> : null}
+        actions={
+          data ? <ProgressRing value={data.subject.progress} label="Subject progress" /> : null
+        }
       />
 
       {isError ? (

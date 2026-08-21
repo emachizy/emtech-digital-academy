@@ -20,7 +20,10 @@ function Page() {
   return (
     <div className="space-y-6">
       <PageHeader title="Profile" description="Your academy profile, skills and recent activity." />
-      <EmptyState title="Nothing to show yet" description="Your activity will appear here as you learn." />
+      <EmptyState
+        title="Nothing to show yet"
+        description="Your activity will appear here as you learn."
+      />
     </div>
   );
 }

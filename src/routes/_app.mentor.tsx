@@ -6,9 +6,15 @@ export const Route = createFileRoute("/_app/mentor")({
   head: () => ({
     meta: [
       { title: "Mentor Workspace — TechEdu" },
-      { name: "description", content: "Mentor tools are prepared but not yet enabled for this cohort." },
+      {
+        name: "description",
+        content: "Mentor tools are prepared but not yet enabled for this cohort.",
+      },
       { property: "og:title", content: "Mentor Workspace — TechEdu" },
-      { property: "og:description", content: "Mentor tools are prepared but not yet enabled for this cohort." },
+      {
+        property: "og:description",
+        content: "Mentor tools are prepared but not yet enabled for this cohort.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -19,8 +25,14 @@ export const Route = createFileRoute("/_app/mentor")({
 function Page() {
   return (
     <div className="space-y-6">
-      <PageHeader title="Mentor Workspace" description="Mentor tools are prepared but not yet enabled for this cohort." />
-      <EmptyState title="Mentor dashboard not enabled" description="Students, submissions, reviews and analytics land here next." />
+      <PageHeader
+        title="Mentor Workspace"
+        description="Mentor tools are prepared but not yet enabled for this cohort."
+      />
+      <EmptyState
+        title="Mentor dashboard not enabled"
+        description="Students, submissions, reviews and analytics land here next."
+      />
     </div>
   );
 }

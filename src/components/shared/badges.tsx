@@ -40,7 +40,10 @@ export function StatusBadge({ value }: { value: TopicStatus }) {
 
 export function XpBadge({ xp }: { xp: number }) {
   return (
-    <Badge variant="outline" className="border-electric/30 bg-electric/10 font-medium text-electric">
+    <Badge
+      variant="outline"
+      className="border-electric/30 bg-electric/10 font-medium text-electric"
+    >
       +{xp} XP
     </Badge>
   );

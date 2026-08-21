@@ -20,7 +20,10 @@ export const Route = createFileRoute("/_app/projects/")({
       { title: "Projects — TechEdu" },
       { name: "description", content: "Build, submit and get mentor feedback on real projects." },
       { property: "og:title", content: "Projects — TechEdu" },
-      { property: "og:description", content: "Build, submit and get mentor feedback on real projects." },
+      {
+        property: "og:description",
+        content: "Build, submit and get mentor feedback on real projects.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -57,10 +60,33 @@ function Page() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Assigned" value={`${projects.length}`} hint="Track projects" icon={FolderKanban} />
-        <StatCard label="In progress" value={`${inProgress.length}`} hint="Keep shipping" icon={Clock} tone="warning" />
-        <StatCard label="Reviewed" value={`${reviewed.length}`} hint="Mentor graded" icon={CheckCircle2} tone="success" />
-        <StatCard label="XP earned" value={`${earnedXp}`} hint="From projects" icon={Trophy} tone="electric" />
+        <StatCard
+          label="Assigned"
+          value={`${projects.length}`}
+          hint="Track projects"
+          icon={FolderKanban}
+        />
+        <StatCard
+          label="In progress"
+          value={`${inProgress.length}`}
+          hint="Keep shipping"
+          icon={Clock}
+          tone="warning"
+        />
+        <StatCard
+          label="Reviewed"
+          value={`${reviewed.length}`}
+          hint="Mentor graded"
+          icon={CheckCircle2}
+          tone="success"
+        />
+        <StatCard
+          label="XP earned"
+          value={`${earnedXp}`}
+          hint="From projects"
+          icon={Trophy}
+          tone="electric"
+        />
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -138,9 +164,17 @@ function Page() {
 
               <div className="mt-4 flex items-center justify-between gap-3 border-t border-border pt-4">
                 <span className="text-xs text-muted-foreground">Due {p.deadline}</span>
-                <Button asChild size="sm" variant={p.status === "not-started" ? "outline" : "default"}>
+                <Button
+                  asChild
+                  size="sm"
+                  variant={p.status === "not-started" ? "outline" : "default"}
+                >
                   <Link to="/projects/$slug" params={{ slug: p.slug }}>
-                    {p.status === "reviewed" ? "View feedback" : p.status === "not-started" ? "Start" : "Continue"}
+                    {p.status === "reviewed"
+                      ? "View feedback"
+                      : p.status === "not-started"
+                        ? "Start"
+                        : "Continue"}
                     <ArrowRight className="size-4" />
                   </Link>
                 </Button>
