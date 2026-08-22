@@ -2,6 +2,14 @@
 
 TechEdu — Modern Tech Academy Learning Platform
 
+> **Status:** This started as a UI-only prototype on mock data. It now runs
+> on a real Supabase (Postgres + Auth) backend with role-based authorization
+> for students, mentors, and admins. See `docs/ARCHITECTURE.md`,
+> `docs/DATABASE.md`, `docs/API.md`, `docs/DEPLOYMENT.md`, and
+> `docs/SECURITY.md` for the current, real state of the system. Everything
+> below this point is the original product brief this build was designed
+> against.
+
 Build a complete, modern, responsive educational SaaS web application called TechEdu.
 
 TechEdu is not intended to be a generic LMS.
