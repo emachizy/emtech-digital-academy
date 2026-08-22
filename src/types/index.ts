@@ -13,47 +13,6 @@ export type Difficulty = "Easy" | "Medium" | "Hard";
 export type AttendanceStatus = "present" | "absent" | "late" | "none";
 export type SkillLevel = "Beginner" | "Intermediate" | "Advanced";
 
-export interface Student {
-  id: string;
-  name: string;
-  firstName: string;
-  studentId: string;
-  email: string;
-  avatar: string;
-  cohort: Cohort;
-  track: string;
-  level: number;
-  levelTitle: string;
-  xp: number;
-  xpToNextLevel: number;
-  streak: number;
-  attendanceRate: number;
-  overallProgress: number;
-  topicsCompleted: number;
-  projectsCompleted: number;
-  skillsEarned: number;
-  github: GithubProfile | null;
-  bio: string;
-  location: string;
-}
-
-export interface Cohort {
-  id: string;
-  name: string;
-  code: string;
-  period: string;
-  instructor: string;
-  students: number;
-}
-
-export interface GithubProfile {
-  username: string;
-  url: string;
-  repositories: number;
-  contributions: number;
-  projects: number;
-}
-
 export interface Track {
   id: string;
   name: string;
@@ -99,23 +58,6 @@ export interface Lesson {
   resources: { label: string; type: string }[];
   exercise: { prompt: string; starter: string };
   quiz: { question: string; options: string[]; answerIndex: number }[];
-}
-
-export interface ClassSession {
-  id: string;
-  title: string;
-  day: string;
-  time: string;
-  instructor: string;
-  mode: string;
-}
-
-export interface Announcement {
-  id: string;
-  kind: "project" | "workshop" | "deadline" | "info";
-  title: string;
-  body: string;
-  date: string;
 }
 
 export interface AttendanceRecord {
@@ -226,19 +168,6 @@ export interface LeaderboardEntry {
 export interface XpRule {
   action: string;
   xp: number;
-}
-
-export interface WeeklyActivityPoint {
-  day: string;
-  hours: number;
-}
-
-export interface PortfolioSection {
-  id: string;
-  title: string;
-  description: string;
-  status: "complete" | "incomplete";
-  itemCount: number;
 }
 
 export interface SearchItem {

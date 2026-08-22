@@ -85,14 +85,21 @@ export const Route = createRootRouteWithContext<{
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "TechEdu" },
+      {
+        name: "description",
+        content:
+          "TechEdu is the operating system for modern tech academies: tracks, lessons, attendance, practice labs, projects and portfolios in one place.",
+      },
+      { name: "author", content: "TechEdu" },
+      { property: "og:title", content: "TechEdu" },
+      {
+        property: "og:description",
+        content:
+          "TechEdu is the operating system for modern tech academies: tracks, lessons, attendance, practice labs, projects and portfolios in one place.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {

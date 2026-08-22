@@ -1,4 +1,3 @@
-import { allSubjects } from "@/data/curriculum";
 import { leaderboards } from "@/data/gamification";
 import { challenges, getChallenge } from "@/data/practice";
 import { activity, skills } from "@/data/student";
@@ -19,6 +18,7 @@ import {
 } from "./notifications.functions";
 import { getMyPortfolioFn, getPublicPortfolioFn, updateMyPortfolioFn } from "./portfolio.functions";
 import { getProjectFn, getProjectsFn, submitProjectFn } from "./projects.functions";
+import { getSearchIndexFn } from "./search.functions";
 import { getStudentProfileFn } from "./student.functions";
 import { NotFoundError, read } from "./client";
 
@@ -31,7 +31,6 @@ export const api = {
   getStudent: () => getStudentProfileFn(),
   getDashboard: () => getStudentProfileFn(),
   getTracks: () => getTracksFn(),
-  getSubjects: () => read(allSubjects),
   getSubject: (slug: string) => getSubjectFn({ data: { slug } }),
   getLesson: (slug: string, topicId: string) =>
     getLessonFn({ data: { subjectSlug: slug, topicId } }),
@@ -66,6 +65,7 @@ export const api = {
     publicSlug?: string;
   }) => updateMyPortfolioFn({ data: params }),
   getPublicPortfolio: (slug: string) => getPublicPortfolioFn({ data: { slug } }),
+  getSearchIndex: () => getSearchIndexFn(),
   mentor: {
     getOverview: () => getMentorOverviewFn(),
     getPendingSubmissions: () => getPendingSubmissionsFn(),

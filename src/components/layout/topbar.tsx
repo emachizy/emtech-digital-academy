@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Flame, LogOut, Menu, Moon, PanelLeftClose, PanelLeftOpen, Sun, User } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { student } from "@/data/student";
+import { api } from "@/lib/api";
 import { useSession } from "@/lib/session";
 import { initials } from "@/lib/utils";
 import { GlobalSearch } from "./global-search";
@@ -27,6 +28,11 @@ export function Topbar({
 }) {
   const { theme, toggleTheme, signOut, user } = useSession();
   const navigate = useNavigate();
+  const { data: student } = useQuery({
+    queryKey: ["student"],
+    queryFn: api.getStudent,
+    enabled: user?.role === "student",
+  });
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-border bg-background/85 px-3 backdrop-blur-md sm:px-5">
@@ -53,10 +59,12 @@ export function Topbar({
         <GlobalSearch />
       </div>
 
-      <span className="hidden items-center gap-1.5 rounded-full border border-warning/30 bg-warning/10 px-3 py-1.5 text-xs font-semibold text-warning sm:inline-flex">
-        <Flame className="size-3.5" />
-        {student.streak} day streak
-      </span>
+      {student ? (
+        <span className="hidden items-center gap-1.5 rounded-full border border-warning/30 bg-warning/10 px-3 py-1.5 text-xs font-semibold text-warning sm:inline-flex">
+          <Flame className="size-3.5" />
+          {student.streak} day streak
+        </span>
+      ) : null}
 
       <NotificationsMenu />
 

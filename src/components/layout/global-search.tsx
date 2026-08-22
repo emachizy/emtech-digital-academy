@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -9,13 +10,24 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { allSubjects, getTopics } from "@/data/curriculum";
 import { challenges } from "@/data/practice";
-import { projects } from "@/data/projects";
+import { api } from "@/lib/api";
+import type { SearchItem } from "@/types";
 
 export function GlobalSearch() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
+  function goTo(item: SearchItem) {
+    setOpen(false);
+    navigate({ to: item.to, ...(item.params ? { params: item.params } : {}) });
+  }
+  const { data: index } = useQuery({
+    queryKey: ["search-index"],
+    queryFn: api.getSearchIndex,
+    enabled: open,
+    staleTime: 5 * 60_000,
+  });
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -28,15 +40,9 @@ export function GlobalSearch() {
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  const topics = useMemo(
-    () =>
-      allSubjects.flatMap((s) =>
-        getTopics(s.slug)
-          .slice(0, 4)
-          .map((t) => ({ ...t, subjectSlug: s.slug, subjectName: s.name })),
-      ),
-    [],
-  );
+  const subjects = index?.filter((i) => i.group === "Subjects") ?? [];
+  const topics = index?.filter((i) => i.group === "Topics") ?? [];
+  const projects = index?.filter((i) => i.group === "Projects") ?? [];
 
   return (
     <>
@@ -57,49 +63,23 @@ export function GlobalSearch() {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Subjects">
-            {allSubjects.map((s) => (
-              <CommandItem
-                key={s.id}
-                value={`subject ${s.name}`}
-                onSelect={() => {
-                  setOpen(false);
-                  navigate({ to: "/learning/$subject", params: { subject: s.slug } });
-                }}
-              >
-                {s.name}
+            {subjects.map((s) => (
+              <CommandItem key={s.id} value={`subject ${s.label}`} onSelect={() => goTo(s)}>
+                {s.label}
               </CommandItem>
             ))}
           </CommandGroup>
           <CommandGroup heading="Topics">
             {topics.map((t) => (
-              <CommandItem
-                key={t.id}
-                value={`topic ${t.subjectName} ${t.title}`}
-                onSelect={() => {
-                  setOpen(false);
-                  navigate({
-                    to: "/learning/$subject/$topicId",
-                    params: { subject: t.subjectSlug, topicId: t.id },
-                  });
-                }}
-              >
-                <span className="text-muted-foreground">{t.subjectName}</span>
-                <span aria-hidden>·</span>
-                {t.title}
+              <CommandItem key={t.id} value={`topic ${t.label}`} onSelect={() => goTo(t)}>
+                {t.label}
               </CommandItem>
             ))}
           </CommandGroup>
           <CommandGroup heading="Projects">
             {projects.map((p) => (
-              <CommandItem
-                key={p.id}
-                value={`project ${p.title}`}
-                onSelect={() => {
-                  setOpen(false);
-                  navigate({ to: "/projects/$slug", params: { slug: p.slug } });
-                }}
-              >
-                {p.title}
+              <CommandItem key={p.id} value={`project ${p.label}`} onSelect={() => goTo(p)}>
+                {p.label}
               </CommandItem>
             ))}
           </CommandGroup>
