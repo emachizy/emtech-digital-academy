@@ -12,7 +12,7 @@ import type { Difficulty, Lesson, Subject, Topic, TopicStatus, Track } from "@/t
  * with a completed lesson (order doesn't have to be contiguous); exactly
  * one topic beyond that is unlocked as "in-progress", the rest are locked.
  */
-function deriveStatus(
+export function deriveStatus(
   index: number,
   isCompleted: boolean,
   lastCompletedIndex: number,

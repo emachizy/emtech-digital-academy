@@ -14,7 +14,7 @@ function formatDate(dateStr: string) {
 }
 
 /** Maps the DB's granular submission lifecycle onto the frontend's 4-state Project.status. */
-function deriveStatus(submissionStatus: string | undefined): Project["status"] {
+export function deriveStatus(submissionStatus: string | undefined): Project["status"] {
   switch (submissionStatus) {
     case "draft":
     case "changes_requested":
@@ -33,7 +33,7 @@ function deriveStatus(submissionStatus: string | undefined): Project["status"] {
 // No stored progress column for projects (avoids duplicated data) — a
 // coarse, honest signal derived from status rather than a fabricated
 // precise percentage.
-const PROGRESS_BY_STATUS: Record<Project["status"], number> = {
+export const PROGRESS_BY_STATUS: Record<Project["status"], number> = {
   "not-started": 0,
   "in-progress": 50,
   submitted: 75,

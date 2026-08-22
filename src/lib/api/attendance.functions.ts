@@ -14,7 +14,7 @@ async function instructorNameMap(supabase: ReturnType<typeof createAdminSupabase
   return new Map((data ?? []).map((p) => [p.id as string, p.full_name as string]));
 }
 
-function formatDay(date: Date) {
+export function formatDay(date: Date) {
   const today = new Date();
   const diffDays = Math.round(
     (new Date(date.toDateString()).getTime() - new Date(today.toDateString()).getTime()) /

@@ -150,7 +150,7 @@ export const getMyPortfolioFn = createServerFn({ method: "GET" })
     };
   });
 
-const slugPattern = /^[a-z0-9-]{3,40}$/;
+export const slugPattern = /^[a-z0-9-]{3,40}$/;
 
 const updatePortfolioInput = z.object({
   headline: z.string().max(120).optional(),

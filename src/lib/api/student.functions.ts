@@ -19,10 +19,10 @@ const LEVEL_TITLES = [
   "Frontend Expert",
   "Frontend Master",
 ];
-function levelTitle(level: number) {
+export function levelTitle(level: number) {
   return LEVEL_TITLES[Math.min(Math.max(level, 1), LEVEL_TITLES.length) - 1] ?? "Learner";
 }
-function xpToNextLevel(level: number) {
+export function xpToNextLevel(level: number) {
   return level * 400 + 400;
 }
 
