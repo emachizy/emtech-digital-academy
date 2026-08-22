@@ -189,10 +189,26 @@ export const getProjectFn = createServerFn({ method: "GET" })
     };
   });
 
+// z.string().url() alone accepts any URL-shaped string, including
+// javascript: URIs — these are stored and later rendered as <a href> on the
+// submission (mentor review, the student's own portfolio, and their public
+// portfolio page if the project is approved), so without this restriction a
+// submitted "live site" link could execute script in whoever clicks it.
+export const httpUrl = z
+  .string()
+  .url()
+  .refine((value) => {
+    try {
+      return ["http:", "https:"].includes(new URL(value).protocol);
+    } catch {
+      return false;
+    }
+  }, "Must be a valid http(s) URL");
+
 const submitInput = z.object({
   slug: z.string().min(1),
-  repoUrl: z.string().url(),
-  liveUrl: z.string().optional(),
+  repoUrl: httpUrl,
+  liveUrl: httpUrl.optional(),
   notes: z.string().max(4000).optional(),
 });
 

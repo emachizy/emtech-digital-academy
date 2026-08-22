@@ -39,6 +39,9 @@ const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => 
   setResponseHeader("X-Frame-Options", "DENY");
   setResponseHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   setResponseHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  // Only meaningful over HTTPS (which every real deployment target for this
+  // app terminates at); harmless as a no-op over plain HTTP in local dev.
+  setResponseHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
   return next();
 });
 
