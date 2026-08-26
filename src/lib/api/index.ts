@@ -19,6 +19,7 @@ import {
 import { getMyPortfolioFn, getPublicPortfolioFn, updateMyPortfolioFn } from "./portfolio.functions";
 import { getProjectFn, getProjectsFn, submitProjectFn } from "./projects.functions";
 import { getSearchIndexFn } from "./search.functions";
+import { getProfileSettingsFn, updateProfileSettingsFn } from "./settings.functions";
 import { getStudentProfileFn } from "./student.functions";
 import { NotFoundError, read } from "./client";
 
@@ -66,6 +67,14 @@ export const api = {
   }) => updateMyPortfolioFn({ data: params }),
   getPublicPortfolio: (slug: string) => getPublicPortfolioFn({ data: { slug } }),
   getSearchIndex: () => getSearchIndexFn(),
+  getProfileSettings: () => getProfileSettingsFn(),
+  updateProfileSettings: (params: {
+    fullName: string;
+    bio?: string;
+    location?: string;
+    githubUrl?: string;
+    linkedinUrl?: string;
+  }) => updateProfileSettingsFn({ data: params }),
   mentor: {
     getOverview: () => getMentorOverviewFn(),
     getPendingSubmissions: () => getPendingSubmissionsFn(),

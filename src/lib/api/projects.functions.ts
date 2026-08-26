@@ -1,6 +1,7 @@
 import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { httpUrl } from "@/lib/api/validators";
 import { authMiddleware } from "@/lib/auth/middleware.server";
 import type { Project, ProjectFeedback } from "@/types";
 
@@ -188,22 +189,6 @@ export const getProjectFn = createServerFn({ method: "GET" })
         : null,
     };
   });
-
-// z.string().url() alone accepts any URL-shaped string, including
-// javascript: URIs — these are stored and later rendered as <a href> on the
-// submission (mentor review, the student's own portfolio, and their public
-// portfolio page if the project is approved), so without this restriction a
-// submitted "live site" link could execute script in whoever clicks it.
-export const httpUrl = z
-  .string()
-  .url()
-  .refine((value) => {
-    try {
-      return ["http:", "https:"].includes(new URL(value).protocol);
-    } catch {
-      return false;
-    }
-  }, "Must be a valid http(s) URL");
 
 const submitInput = z.object({
   slug: z.string().min(1),

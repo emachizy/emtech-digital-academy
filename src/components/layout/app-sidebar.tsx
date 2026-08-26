@@ -1,8 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Flame } from "lucide-react";
 import { Brand } from "./brand";
 import { navSections } from "./nav-config";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { api } from "@/lib/api";
+import { useSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
 
 export function AppSidebar({
@@ -13,6 +16,12 @@ export function AppSidebar({
   onNavigate?: () => void;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { user } = useSession();
+  const { data: student } = useQuery({
+    queryKey: ["student"],
+    queryFn: api.getStudent,
+    enabled: user?.role === "student",
+  });
 
   return (
     <div className="flex h-full flex-col bg-sidebar">
@@ -71,17 +80,17 @@ export function AppSidebar({
         ))}
       </nav>
 
-      {!collapsed && (
+      {!collapsed && student ? (
         <div className="m-3 rounded-xl border border-sidebar-border bg-sidebar-accent/50 p-4">
           <p className="flex items-center gap-2 text-sm font-semibold text-sidebar-accent-foreground">
             <Flame className="size-4 text-warning" />
-            12 day streak
+            {student.streak} day streak
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
             Finish one lesson today to keep it alive.
           </p>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

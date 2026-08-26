@@ -10,17 +10,17 @@ authentication, a normalized Postgres schema, and Row Level Security.
 
 ## Stack
 
-| Layer | Choice |
-|---|---|
-| Framework | TanStack Start (Vite-based, SSR, file-based routing via TanStack Router) |
-| Data fetching / cache | TanStack Query |
-| Database | Postgres via Supabase |
-| Auth | Supabase Auth, cookie-based sessions via `@supabase/ssr` |
-| Styling | Tailwind CSS v4 + shadcn/ui (Radix primitives) |
-| Validation | Zod, on every server function that accepts input |
-| Runtime | Bun (package manager + `db:seed` script runner) |
-| Deploy target | Cloudflare Workers (Nitro's default preset for this project) |
-| Tests | Vitest |
+| Layer                 | Choice                                                                   |
+| --------------------- | ------------------------------------------------------------------------ |
+| Framework             | TanStack Start (Vite-based, SSR, file-based routing via TanStack Router) |
+| Data fetching / cache | TanStack Query                                                           |
+| Database              | Postgres via Supabase                                                    |
+| Auth                  | Supabase Auth, cookie-based sessions via `@supabase/ssr`                 |
+| Styling               | Tailwind CSS v4 + shadcn/ui (Radix primitives)                           |
+| Validation            | Zod, on every server function that accepts input                         |
+| Runtime               | Bun (package manager + `db:seed` script runner)                          |
+| Deploy target         | Cloudflare Workers (Nitro's default preset for this project)             |
+| Tests                 | Vitest                                                                   |
 
 ## Two different "auth gates" — do not confuse them
 
@@ -35,7 +35,7 @@ or authorization code in this app.
    `src/lib/auth/middleware.server.ts`) is the **real** authorization
    boundary. Every `createServerFn` is a directly-reachable RPC endpoint
    regardless of which route (if any) calls it — a route guard around the
-   *page* does nothing to protect the *server function* if it were called
+   _page_ does nothing to protect the _server function_ if it were called
    from somewhere else. Every server function that reads or writes private
    data has `authMiddleware` or `requireRole(role)` in its `.middleware([])`
    array. If you add a new server function, it needs one of these.
@@ -69,7 +69,7 @@ expressed as "does this row belong to this authenticated user" — e.g.
 validating the class session window + cohort membership + de-duplication is
 business logic, not a row-ownership check) and `getPublicPortfolioFn` (there
 is no session at all for an anonymous visitor; the `is_public`/slug filter
-in the query *is* the authorization check).
+in the query _is_ the authorization check).
 
 ## Error handling
 
@@ -148,12 +148,6 @@ that exist because the corresponding UI was never built — not oversights:
   `src/data/gamification.ts`/`src/data/student.ts` mocks. Building a real
   code-execution sandbox, a gamification engine, and a leaderboard were
   explicitly flagged as out of scope for this MVP.
-- **No user-facing "edit profile" form yet** (`src/routes/_app.settings.tsx`
-  is still a placeholder). `profiles.github_url`/`linkedin_url` can
-  currently only be set via seed data or direct DB access. Whenever that
-  form is built, its GitHub/LinkedIn URL fields need the same http(s)-only
-  validation as project submission URLs (`httpUrl` in
-  `src/lib/api/projects.functions.ts`) — see `docs/SECURITY.md`.
 - **No admin UI to promote a user to mentor/admin.** The RLS trigger
   (`prevent_role_self_escalation`, migration 0003) correctly restricts role
   changes to admins-via-service-role, and `scripts/seed.ts` creates the

@@ -25,16 +25,21 @@ review dialog (`_app.mentor.tsx`), the student's own portfolio editor
 it — most severely the reviewing mentor, or any anonymous visitor to the
 student's public portfolio.
 
-**Fix:** `src/lib/api/projects.functions.ts` now has an `httpUrl` schema
-that parses the string as a URL and asserts `protocol` is `http:` or
-`https:`, used for both `repoUrl` (required) and `liveUrl` (optional).
-Covered by tests in `projects.functions.test.ts`.
+**Fix:** the validator moved to a shared `src/lib/api/validators.ts` (`httpUrl`)
+so it isn't duplicated per call site, and asserts the parsed URL's
+`protocol` is `http:` or `https:`. Used for `repoUrl` (required) and
+`liveUrl` (optional) in `projects.functions.ts`. Covered by tests in
+`validators.test.ts`.
 
-**Not yet exploitable, but has the same shape:** `profiles.github_url` /
-`linkedin_url` are rendered as `<a href>` in the same three places plus the
-profile page, but there is currently no user-facing form that writes them
-(`_app.settings.tsx` is a placeholder — see `docs/ARCHITECTURE.md`). Apply
-the same `httpUrl`-style validation the moment that form is built.
+`profiles.github_url`/`linkedin_url` had the identical shape (same three
+render sites, plus the profile page) — at review time there was no
+user-facing form that wrote them, so it wasn't yet exploitable, but the
+settings page shipped in the same phase (`settings.functions.ts`) reuses
+the same `httpUrl` validator for both fields, so this was closed before it
+became reachable rather than after. Verified live: a `javascript:` URI
+submitted through the settings form is rejected and never reaches the
+database (confirmed via direct query), while a real https URL saves and
+appears correctly on the profile page.
 
 ### 2. Five high-severity dependency vulnerabilities (fixed)
 
