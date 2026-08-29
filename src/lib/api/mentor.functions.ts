@@ -2,6 +2,10 @@ import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth/middleware.server";
+import { sendEmail, siteUrl } from "@/lib/email/brevo.server";
+import { senders } from "@/lib/email/senders";
+import { feedbackReadyEmail } from "@/lib/email/templates";
+import { createAdminSupabase } from "@/lib/supabase/admin.server";
 
 export interface MentorStudent {
   id: string;
@@ -211,7 +215,7 @@ export const submitReviewFn = createServerFn({ method: "POST" })
     // here IS the authorization check, not just a lookup.
     const { data: submission, error: subError } = await supabase
       .from("project_submissions")
-      .select("id, profile_id, project:projects(title)")
+      .select("id, profile_id, project:projects(title, slug)")
       .eq("id", data.submissionId)
       .maybeSingle();
     if (subError) throw subError;
@@ -233,8 +237,8 @@ export const submitReviewFn = createServerFn({ method: "POST" })
       .eq("id", data.submissionId);
     if (updateError) throw updateError;
 
-    const projectTitle =
-      (submission.project as unknown as { title: string } | null)?.title ?? "your project";
+    const project = submission.project as unknown as { title: string; slug: string } | null;
+    const projectTitle = project?.title ?? "your project";
     await supabase.from("notifications").insert({
       profile_id: submission.profile_id,
       kind: "feedback",
@@ -242,6 +246,33 @@ export const submitReviewFn = createServerFn({ method: "POST" })
       body: `Your ${projectTitle} submission has been reviewed.`,
       read: false,
     });
+
+    try {
+      const [{ data: mentorProfile }, { data: studentProfile }] = await Promise.all([
+        supabase.from("profiles").select("full_name").eq("id", userId).single(),
+        supabase.from("profiles").select("full_name").eq("id", submission.profile_id).single(),
+      ]);
+      // The mentor's own session can't read another user's auth.users email
+      // (no RLS path for it) — this is the one place in this function that
+      // needs the service-role client, purely to look up an email address.
+      const admin = createAdminSupabase();
+      const { data: studentAuth } = await admin.auth.admin.getUserById(submission.profile_id);
+      const email = studentAuth.user?.email;
+      if (email && project) {
+        const content = feedbackReadyEmail({
+          studentName: studentProfile?.full_name ?? "there",
+          projectTitle: project.title,
+          mentorName: mentorProfile?.full_name ?? "Your mentor",
+          decision: data.decision,
+          score: data.score,
+          ...(data.comment ? { comment: data.comment } : {}),
+          projectUrl: siteUrl(`/projects/${project.slug}`),
+        });
+        await sendEmail({ to: { email }, sender: senders.noReply, ...content });
+      }
+    } catch (emailError) {
+      console.error("feedbackReadyEmail failed", emailError);
+    }
 
     return { ok: true };
   });

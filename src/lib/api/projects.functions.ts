@@ -3,6 +3,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { httpUrl } from "@/lib/api/validators";
 import { authMiddleware } from "@/lib/auth/middleware.server";
+import { sendEmail, siteUrl } from "@/lib/email/brevo.server";
+import { senders } from "@/lib/email/senders";
+import { submissionReceivedEmail } from "@/lib/email/templates";
 import type { Project, ProjectFeedback } from "@/types";
 
 function formatDate(dateStr: string) {
@@ -205,7 +208,7 @@ export const submitProjectFn = createServerFn({ method: "POST" })
 
     const { data: project, error: projectError } = await supabase
       .from("projects")
-      .select("id")
+      .select("id, title")
       .eq("slug", data.slug)
       .eq("published", true)
       .maybeSingle();
@@ -225,6 +228,24 @@ export const submitProjectFn = createServerFn({ method: "POST" })
       { onConflict: "project_id,profile_id" },
     );
     if (error) throw error;
+
+    try {
+      const [{ data: profile }, { data: authUser }] = await Promise.all([
+        supabase.from("profiles").select("full_name").eq("id", userId).single(),
+        supabase.auth.getUser(),
+      ]);
+      const email = authUser.user?.email;
+      if (email) {
+        const content = submissionReceivedEmail({
+          studentName: profile?.full_name ?? "there",
+          projectTitle: project.title,
+          projectUrl: siteUrl(`/projects/${data.slug}`),
+        });
+        await sendEmail({ to: { email }, sender: senders.noReply, ...content });
+      }
+    } catch (emailError) {
+      console.error("submissionReceivedEmail failed", emailError);
+    }
 
     return { status: "submitted" as const };
   });
