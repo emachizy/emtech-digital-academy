@@ -1,6 +1,6 @@
 # TechPath Pro
 
-TechEdu — Modern Tech Academy Learning Platform
+Emtech Digital Academy — Modern Tech Academy Learning Platform
 
 > **Status:** This started as a UI-only prototype on mock data. It now runs
 > on a real Supabase (Postgres + Auth) backend with role-based authorization
@@ -10,9 +10,9 @@ TechEdu — Modern Tech Academy Learning Platform
 > below this point is the original product brief this build was designed
 > against.
 
-Build a complete, modern, responsive educational SaaS web application called TechEdu.
+Build a complete, modern, responsive educational SaaS web application called Emtech Digital Academy.
 
-TechEdu is not intended to be a generic LMS.
+Emtech Digital Academy is not intended to be a generic LMS.
 
 It should function as a Tech Academy Operating System where students can learn technical skills, track attendance, follow structured learning paths, practice coding, complete projects, receive mentor feedback, and gradually build a professional technology portfolio.
 
@@ -1055,7 +1055,7 @@ Announcement
 
 Design a floating:
 
-Ask TechEdu AI
+Ask Emtech Digital Academy AI
 
 button.
 
@@ -1353,7 +1353,7 @@ Review Feedback
 
 49. PRODUCT PHILOSOPHY
 
-Do NOT make TechEdu feel like traditional school management software.
+Do NOT make Emtech Digital Academy feel like traditional school management software.
 
 Avoid:
 

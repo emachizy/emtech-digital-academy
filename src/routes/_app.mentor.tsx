@@ -39,9 +39,9 @@ export const Route = createFileRoute("/_app/mentor")({
   },
   head: () => ({
     meta: [
-      { title: "Mentor Workspace — TechEdu" },
+      { title: "Mentor Workspace — Emtech Digital Academy" },
       { name: "description", content: "Your assigned cohort, students and pending reviews." },
-      { property: "og:title", content: "Mentor Workspace — TechEdu" },
+      { property: "og:title", content: "Mentor Workspace — Emtech Digital Academy" },
       {
         property: "og:description",
         content: "Your assigned cohort, students and pending reviews.",

@@ -85,21 +85,23 @@ export const Route = createRootRouteWithContext<{
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TechEdu" },
+      { title: "Emtech Digital Academy" },
       {
         name: "description",
         content:
-          "TechEdu is the operating system for modern tech academies: tracks, lessons, attendance, practice labs, projects and portfolios in one place.",
+          "Emtech Digital Academy is the operating system for modern tech academies: tracks, lessons, attendance, practice labs, projects and portfolios in one place.",
       },
-      { name: "author", content: "TechEdu" },
-      { property: "og:title", content: "TechEdu" },
+      { name: "author", content: "Emtech Digital Academy" },
+      { property: "og:title", content: "Emtech Digital Academy" },
       {
         property: "og:description",
         content:
-          "TechEdu is the operating system for modern tech academies: tracks, lessons, attendance, practice labs, projects and portfolios in one place.",
+          "Emtech Digital Academy is the operating system for modern tech academies: tracks, lessons, attendance, practice labs, projects and portfolios in one place.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "/og-image.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "/og-image.jpg" },
     ],
     links: [
       {
@@ -107,6 +109,7 @@ export const Route = createRootRouteWithContext<{
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "apple-touch-icon", href: "/logo-icon.png" },
     ],
   }),
   shellComponent: RootShell,

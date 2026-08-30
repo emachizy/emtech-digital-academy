@@ -10,9 +10,9 @@ import { api } from "@/lib/api";
 export const Route = createFileRoute("/_app/learning/$subject/")({
   head: () => ({
     meta: [
-      { title: "Subject — TechEdu" },
+      { title: "Subject — Emtech Digital Academy" },
       { name: "description", content: "Work through the curriculum topic by topic." },
-      { property: "og:title", content: "Subject — TechEdu" },
+      { property: "og:title", content: "Subject — Emtech Digital Academy" },
       { property: "og:description", content: "Work through the curriculum topic by topic." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -17,12 +17,12 @@ import type { MyPortfolio } from "@/lib/api/portfolio.functions";
 export const Route = createFileRoute("/_app/portfolio")({
   head: () => ({
     meta: [
-      { title: "Portfolio — TechEdu" },
+      { title: "Portfolio — Emtech Digital Academy" },
       {
         name: "description",
         content: "Build and publish the developer portfolio that shows your work.",
       },
-      { property: "og:title", content: "Portfolio — TechEdu" },
+      { property: "og:title", content: "Portfolio — Emtech Digital Academy" },
       {
         property: "og:description",
         content: "Build and publish the developer portfolio that shows your work.",

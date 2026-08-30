@@ -22,9 +22,9 @@ import { challenges } from "@/data/practice";
 export const Route = createFileRoute("/_app/practice/$challengeId")({
   head: () => ({
     meta: [
-      { title: "Challenge — TechEdu" },
+      { title: "Challenge — Emtech Digital Academy" },
       { name: "description", content: "Solve the challenge in the playground." },
-      { property: "og:title", content: "Challenge — TechEdu" },
+      { property: "og:title", content: "Challenge — Emtech Digital Academy" },
       { property: "og:description", content: "Solve the challenge in the playground." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

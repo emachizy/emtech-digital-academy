@@ -5,9 +5,9 @@ import { EmptyState } from "@/components/shared/states";
 export const Route = createFileRoute("/_app/help")({
   head: () => ({
     meta: [
-      { title: "Help — TechEdu" },
+      { title: "Help — Emtech Digital Academy" },
       { name: "description", content: "Guides, FAQs and how to reach your mentor." },
-      { property: "og:title", content: "Help — TechEdu" },
+      { property: "og:title", content: "Help — Emtech Digital Academy" },
       { property: "og:description", content: "Guides, FAQs and how to reach your mentor." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

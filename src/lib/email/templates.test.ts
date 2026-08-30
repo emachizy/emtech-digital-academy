@@ -7,6 +7,7 @@ describe("submissionReceivedEmail", () => {
       studentName: "Alex Johnson",
       projectTitle: "Portfolio Website",
       projectUrl: "https://example.com/projects/portfolio-website",
+      logoUrl: "https://example.com/logo-icon.png",
     });
     expect(subject).toContain("Portfolio Website");
     expect(html).toContain("Alex Johnson");
@@ -19,9 +20,10 @@ describe("submissionReceivedEmail", () => {
       studentName: "<img src=x onerror=alert(1)>",
       projectTitle: "Weather App",
       projectUrl: "https://example.com/projects/weather-app",
+      logoUrl: "https://example.com/logo-icon.png",
     });
-    expect(html).not.toContain("<img");
-    expect(html).toContain("&lt;img");
+    expect(html).not.toContain("<img src=x onerror=alert(1)>");
+    expect(html).toContain("&lt;img src=x onerror=alert(1)&gt;");
   });
 });
 
@@ -34,6 +36,7 @@ describe("feedbackReadyEmail", () => {
       decision: "approved",
       score: 92,
       projectUrl: "https://example.com/projects/weather-app",
+      logoUrl: "https://example.com/logo-icon.png",
     });
     expect(subject).toContain("Weather App");
     expect(html).toContain("Sarah Johnson");
@@ -50,6 +53,7 @@ describe("feedbackReadyEmail", () => {
       score: 60,
       comment: "Please handle the loading state.",
       projectUrl: "https://example.com/projects/weather-app",
+      logoUrl: "https://example.com/logo-icon.png",
     });
     expect(withComment.html).toContain("Please handle the loading state.");
 
@@ -60,6 +64,7 @@ describe("feedbackReadyEmail", () => {
       decision: "rejected",
       score: 40,
       projectUrl: "https://example.com/projects/weather-app",
+      logoUrl: "https://example.com/logo-icon.png",
     });
     expect(withoutComment.html).not.toContain("Please handle");
   });
@@ -73,6 +78,7 @@ describe("feedbackReadyEmail", () => {
       score: 90,
       comment: "<script>alert(1)</script>",
       projectUrl: "https://example.com/projects/weather-app",
+      logoUrl: "https://example.com/logo-icon.png",
     });
     expect(html).not.toContain("<script>");
     expect(html).toContain("&lt;script&gt;");

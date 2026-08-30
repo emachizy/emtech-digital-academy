@@ -24,8 +24,8 @@ export const challenges: Challenge[] = [
       "Do not mutate the original input.",
       "Handle an empty string.",
     ],
-    starter: `function reverse(input) {\n  // your code here\n}\n\nconsole.log(reverse("TechEdu"));`,
-    expectedOutput: "udEhceT",
+    starter: `function reverse(input) {\n  // your code here\n}\n\nconsole.log(reverse("Emtech Digital Academy"));`,
+    expectedOutput: "ymedacA latigiD hcetmE",
     completed: true,
   },
   {

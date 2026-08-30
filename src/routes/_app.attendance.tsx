@@ -23,12 +23,12 @@ import type { AttendanceStatus } from "@/types";
 export const Route = createFileRoute("/_app/attendance")({
   head: () => ({
     meta: [
-      { title: "Attendance — TechEdu" },
+      { title: "Attendance — Emtech Digital Academy" },
       {
         name: "description",
         content: "Track your class attendance and check in to today's session.",
       },
-      { property: "og:title", content: "Attendance — TechEdu" },
+      { property: "og:title", content: "Attendance — Emtech Digital Academy" },
       {
         property: "og:description",
         content: "Track your class attendance and check in to today's session.",

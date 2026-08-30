@@ -15,9 +15,9 @@ import { challengeCategories, challenges } from "@/data/practice";
 export const Route = createFileRoute("/_app/practice/")({
   head: () => ({
     meta: [
-      { title: "Practice Lab — TechEdu" },
+      { title: "Practice Lab — Emtech Digital Academy" },
       { name: "description", content: "Daily challenges, quizzes and a code playground." },
-      { property: "og:title", content: "Practice Lab — TechEdu" },
+      { property: "og:title", content: "Practice Lab — Emtech Digital Academy" },
       { property: "og:description", content: "Daily challenges, quizzes and a code playground." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

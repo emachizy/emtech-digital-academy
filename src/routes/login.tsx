@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { AlertCircle, ArrowLeft, CheckCircle2, Sparkles } from "lucide-react";
+import { AlertCircle, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/login")({
     }
   },
   head: () => ({
-    meta: [{ title: "Sign in — TechEdu" }],
+    meta: [{ title: "Sign in — Emtech Digital Academy" }],
   }),
   component: LoginPage,
 });
@@ -128,7 +128,7 @@ function LoginPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-12">
       <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
-        <Sparkles className="size-3.5" /> TechEdu
+        <img src="/logo-icon.png" alt="" className="size-3.5" /> Emtech Digital Academy
       </span>
 
       <Card className="w-full max-w-md">
@@ -169,7 +169,7 @@ function LoginPage() {
         ) : (
           <Tabs value={mode} onValueChange={(value) => setMode(value as Mode)}>
             <CardHeader>
-              <CardTitle>Welcome to TechEdu</CardTitle>
+              <CardTitle>Welcome to Emtech Digital Academy</CardTitle>
               <CardDescription>Sign in to continue your learning path.</CardDescription>
               <TabsList className="mt-2 grid w-full grid-cols-2">
                 <TabsTrigger value="signin">Sign in</TabsTrigger>

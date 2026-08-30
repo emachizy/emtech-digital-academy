@@ -20,9 +20,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_app/achievements")({
   head: () => ({
     meta: [
-      { title: "Achievements — TechEdu" },
+      { title: "Achievements — Emtech Digital Academy" },
       { name: "description", content: "Badges, XP, levels and certificates you have earned." },
-      { property: "og:title", content: "Achievements — TechEdu" },
+      { property: "og:title", content: "Achievements — Emtech Digital Academy" },
       {
         property: "og:description",
         content: "Badges, XP, levels and certificates you have earned.",
@@ -125,7 +125,7 @@ function Page() {
         <StatCard
           label="Certificates"
           value={`${completedCerts.length}/${certificates.length}`}
-          hint="Issued by TechEdu Academy"
+          hint="Issued by Emtech Digital Academy"
           icon={Star}
           tone="success"
         />

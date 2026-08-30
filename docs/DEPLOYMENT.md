@@ -40,7 +40,7 @@ bun run db:seed
 ```
 
 Creates three demo accounts (`admin@techedu.local`, `mentor@techedu.local`,
-`student@techedu.local`, password `TechEdu!2026`), a cohort, tracks/subjects/
+`student@techedu.local`, password `Emtech Digital Academy!2026`), a cohort, tracks/subjects/
 topics/lessons, projects, achievements, and related seed content. **Never run
 this against a real production database** — it deletes and recreates users by
 email, and the demo password is public (it's printed on the sign-in page in

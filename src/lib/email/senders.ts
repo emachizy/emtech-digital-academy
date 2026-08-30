@@ -15,7 +15,7 @@ export interface EmailSender {
  * - contact: anything tied to a human support conversation.
  */
 export const senders = {
-  noReply: { name: "TechEdu", email: "no-reply@emtechdigitalacademy.com.ng" },
-  info: { name: "TechEdu", email: "info@emtechdigitalacademy.com.ng" },
-  contact: { name: "TechEdu", email: "contact@emtechdigitalacademy.com.ng" },
+  noReply: { name: "Emtech Digital Academy", email: "no-reply@emtechdigitalacademy.com.ng" },
+  info: { name: "Emtech Digital Academy", email: "info@emtechdigitalacademy.com.ng" },
+  contact: { name: "Emtech Digital Academy", email: "contact@emtechdigitalacademy.com.ng" },
 } as const satisfies Record<string, EmailSender>;

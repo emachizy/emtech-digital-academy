@@ -46,9 +46,9 @@ export const Route = createFileRoute("/_app/admin")({
   },
   head: () => ({
     meta: [
-      { title: "Administration — TechEdu" },
+      { title: "Administration — Emtech Digital Academy" },
       { name: "description", content: "Cohorts, mentors and platform-wide analytics." },
-      { property: "og:title", content: "Administration — TechEdu" },
+      { property: "og:title", content: "Administration — Emtech Digital Academy" },
       { property: "og:description", content: "Cohorts, mentors and platform-wide analytics." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

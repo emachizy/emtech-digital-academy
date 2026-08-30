@@ -15,12 +15,12 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 export const Route = createFileRoute("/_app/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — TechEdu" },
+      { title: "Settings — Emtech Digital Academy" },
       {
         name: "description",
         content: "Manage your account, appearance, notifications and privacy.",
       },
-      { property: "og:title", content: "Settings — TechEdu" },
+      { property: "og:title", content: "Settings — Emtech Digital Academy" },
       {
         property: "og:description",
         content: "Manage your account, appearance, notifications and privacy.",

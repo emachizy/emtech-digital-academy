@@ -21,8 +21,8 @@ export const Route = createFileRoute("/_app/projects/$slug")({
   loader: ({ params }): Promise<ProjectDetail> => api.getProject(params.slug),
   head: ({ loaderData }) => {
     const title = loaderData
-      ? `${loaderData.project.title} — Project — TechEdu`
-      : "Project — TechEdu";
+      ? `${loaderData.project.title} — Project — Emtech Digital Academy`
+      : "Project — Emtech Digital Academy";
     const description = loaderData
       ? loaderData.project.summary
       : "Requirements, submission and mentor feedback.";

@@ -240,6 +240,7 @@ export const submitProjectFn = createServerFn({ method: "POST" })
           studentName: profile?.full_name ?? "there",
           projectTitle: project.title,
           projectUrl: siteUrl(`/projects/${data.slug}`),
+          logoUrl: siteUrl("/logo-icon.png"),
         });
         await sendEmail({ to: { email }, sender: senders.noReply, ...content });
       }

@@ -267,6 +267,7 @@ export const submitReviewFn = createServerFn({ method: "POST" })
           score: data.score,
           ...(data.comment ? { comment: data.comment } : {}),
           projectUrl: siteUrl(`/projects/${project.slug}`),
+          logoUrl: siteUrl("/logo-icon.png"),
         });
         await sendEmail({ to: { email }, sender: senders.noReply, ...content });
       }

@@ -12,13 +12,13 @@ import { api } from "@/lib/api";
 export const Route = createFileRoute("/_app/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — TechEdu" },
+      { title: "Dashboard — Emtech Digital Academy" },
       {
         name: "description",
         content:
           "Your personalised learning command centre: progress, streak, XP and what to do next.",
       },
-      { property: "og:title", content: "Dashboard — TechEdu" },
+      { property: "og:title", content: "Dashboard — Emtech Digital Academy" },
       {
         property: "og:description",
         content:

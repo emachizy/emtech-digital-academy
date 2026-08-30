@@ -18,9 +18,9 @@ import type { Project } from "@/types";
 export const Route = createFileRoute("/_app/projects/")({
   head: () => ({
     meta: [
-      { title: "Projects — TechEdu" },
+      { title: "Projects — Emtech Digital Academy" },
       { name: "description", content: "Build, submit and get mentor feedback on real projects." },
-      { property: "og:title", content: "Projects — TechEdu" },
+      { property: "og:title", content: "Projects — Emtech Digital Academy" },
       {
         property: "og:description",
         content: "Build, submit and get mentor feedback on real projects.",

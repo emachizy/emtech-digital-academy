@@ -10,7 +10,7 @@ import { initials } from "@/lib/utils";
 export const Route = createFileRoute("/p/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: "Portfolio — TechEdu" },
+      { title: "Portfolio — Emtech Digital Academy" },
       { name: "description", content: `Public developer portfolio — ${params.slug}` },
       { property: "og:type", content: "profile" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -177,14 +177,15 @@ function Page() {
 
       {p.achievementCount > 0 ? (
         <p className="mt-10 text-xs text-muted-foreground">
-          {p.achievementCount} achievement{p.achievementCount === 1 ? "" : "s"} earned on TechEdu.
+          {p.achievementCount} achievement{p.achievementCount === 1 ? "" : "s"} earned on Emtech
+          Digital Academy.
         </p>
       ) : null}
 
       <p className="mt-16 text-center text-xs text-muted-foreground">
         Built on{" "}
         <Link to="/" className="text-primary hover:underline">
-          TechEdu
+          Emtech Digital Academy
         </Link>
       </p>
     </main>

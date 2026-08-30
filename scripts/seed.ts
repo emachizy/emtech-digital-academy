@@ -61,7 +61,7 @@ async function main() {
   await db
     .from("profiles")
     .update({
-      bio: "Frontend student at TechEdu building interfaces that feel fast and friendly. Currently deep in JavaScript and React.",
+      bio: "Frontend student at Emtech Digital Academy building interfaces that feel fast and friendly. Currently deep in JavaScript and React.",
       location: "Lagos, Nigeria",
       xp: 2450,
       level: 7,
@@ -349,7 +349,7 @@ async function main() {
               {
                 heading: "Example",
                 body: "Read through the example below, then type it out yourself. Typing beats copying — it builds recall.",
-                code: `// ${subject.name} — ${title}\nconst heading = document.querySelector("h1");\n\nheading.textContent = "Hello, TechEdu";\nheading.classList.add("is-active");`,
+                code: `// ${subject.name} — ${title}\nconst heading = document.querySelector("h1");\n\nheading.textContent = "Hello, Emtech Digital Academy";\nheading.classList.add("is-active");`,
               },
               {
                 heading: "Common mistakes",
@@ -512,8 +512,8 @@ async function main() {
         "Do not mutate the original input.",
         "Handle an empty string.",
       ],
-      starter: `function reverse(input) {\n  // your code here\n}\n\nconsole.log(reverse("TechEdu"));`,
-      expectedOutput: "udEhceT",
+      starter: `function reverse(input) {\n  // your code here\n}\n\nconsole.log(reverse("Emtech Digital Academy"));`,
+      expectedOutput: "ymedacA latigiD hcetmE",
       completed: true,
     },
     {
@@ -1130,7 +1130,7 @@ async function main() {
   await db.from("portfolio_profiles").insert({
     profile_id: alexId,
     headline: "Frontend Developer",
-    bio: "Frontend student at TechEdu building interfaces that feel fast and friendly. Currently deep in JavaScript and React.",
+    bio: "Frontend student at Emtech Digital Academy building interfaces that feel fast and friendly. Currently deep in JavaScript and React.",
     is_public: true,
     public_slug: "alex-johnson",
   });

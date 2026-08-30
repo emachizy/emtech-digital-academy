@@ -1,6 +1,6 @@
 # Architecture
 
-TechEdu is a TanStack Start application (React 19 + TanStack Router/Query,
+Emtech Digital Academy is a TanStack Start application (React 19 + TanStack Router/Query,
 server-rendered, deployed as a single Cloudflare Worker by default) backed by
 Supabase (Postgres + Auth). It started as a Lovable-generated frontend
 prototype running entirely on mock data in `src/data/*`; that prototype's

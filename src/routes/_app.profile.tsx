@@ -19,9 +19,9 @@ import { initials } from "@/lib/utils";
 export const Route = createFileRoute("/_app/profile")({
   head: () => ({
     meta: [
-      { title: "Profile — TechEdu" },
+      { title: "Profile — Emtech Digital Academy" },
       { name: "description", content: "Your academy profile, skills and recent activity." },
-      { property: "og:title", content: "Profile — TechEdu" },
+      { property: "og:title", content: "Profile — Emtech Digital Academy" },
       { property: "og:description", content: "Your academy profile, skills and recent activity." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

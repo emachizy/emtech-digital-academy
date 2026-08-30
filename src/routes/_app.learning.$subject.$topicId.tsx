@@ -53,10 +53,13 @@ export const Route = createFileRoute("/_app/learning/$subject/$topicId")({
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [{ title: "Lesson unavailable — TechEdu" }, { name: "robots", content: "noindex" }],
+        meta: [
+          { title: "Lesson unavailable — Emtech Digital Academy" },
+          { name: "robots", content: "noindex" },
+        ],
       };
     }
-    const title = `${loaderData.lesson.title} — ${loaderData.subjectName} — TechEdu`;
+    const title = `${loaderData.lesson.title} — ${loaderData.subjectName} — Emtech Digital Academy`;
     const description = loaderData.lesson.intro;
     return {
       meta: [

@@ -14,7 +14,7 @@ function escapeHtml(value: string): string {
  * pre-built HTML; any user-supplied string embedded in it must already be
  * escaped by the caller (see escapeHtml above).
  */
-function layout(bodyHtml: string): string {
+function layout(bodyHtml: string, logoUrl: string): string {
   return `<!doctype html>
 <html lang="en">
   <body style="margin:0;padding:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
@@ -24,7 +24,16 @@ function layout(bodyHtml: string): string {
           <table role="presentation" width="100%" style="max-width:480px;background:#ffffff;border-radius:12px;overflow:hidden;">
             <tr>
               <td style="padding:24px 32px;border-bottom:1px solid #eeeeee;">
-                <span style="font-size:16px;font-weight:700;color:${BRAND_COLOR};">TechEdu</span>
+                <table role="presentation" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="vertical-align:middle;padding-right:8px;">
+                      <img src="${logoUrl}" alt="" width="28" height="28" style="display:block;" />
+                    </td>
+                    <td style="vertical-align:middle;font-size:16px;font-weight:700;color:${BRAND_COLOR};">
+                      Emtech Digital Academy
+                    </td>
+                  </tr>
+                </table>
               </td>
             </tr>
             <tr>
@@ -34,7 +43,7 @@ function layout(bodyHtml: string): string {
             </tr>
             <tr>
               <td style="padding:20px 32px;border-top:1px solid #eeeeee;color:#8a8a8a;font-size:12px;">
-                You're receiving this because you have an account on TechEdu.
+                You're receiving this because you have an account on Emtech Digital Academy.
               </td>
             </tr>
           </table>
@@ -58,19 +67,23 @@ export function submissionReceivedEmail(params: {
   studentName: string;
   projectTitle: string;
   projectUrl: string;
+  logoUrl: string;
 }): EmailContent {
   const name = escapeHtml(params.studentName);
   const title = escapeHtml(params.projectTitle);
   return {
     subject: `We received your "${params.projectTitle}" submission`,
-    html: layout(`
+    html: layout(
+      `
       <p style="margin:0 0 12px;">Hi ${name},</p>
       <p style="margin:0 0 12px;">
         Your submission for <strong>${title}</strong> is in — a mentor will
         review it and get back to you with feedback.
       </p>
       ${button("View your submission", params.projectUrl)}
-    `),
+    `,
+      params.logoUrl,
+    ),
   };
 }
 
@@ -82,6 +95,7 @@ export function feedbackReadyEmail(params: {
   score: number;
   comment?: string;
   projectUrl: string;
+  logoUrl: string;
 }): EmailContent {
   const name = escapeHtml(params.studentName);
   const title = escapeHtml(params.projectTitle);
@@ -95,7 +109,8 @@ export function feedbackReadyEmail(params: {
 
   return {
     subject: `Feedback on your "${params.projectTitle}" submission`,
-    html: layout(`
+    html: layout(
+      `
       <p style="margin:0 0 12px;">Hi ${name},</p>
       <p style="margin:0 0 12px;">
         ${mentor} reviewed your <strong>${title}</strong> submission — it was
@@ -107,6 +122,8 @@ export function feedbackReadyEmail(params: {
           : ""
       }
       ${button("View feedback", params.projectUrl)}
-    `),
+    `,
+      params.logoUrl,
+    ),
   };
 }

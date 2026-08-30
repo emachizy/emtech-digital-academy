@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,7 @@ export const Route = createFileRoute("/reset-password")({
     return typeof code === "string" ? { code } : {};
   },
   head: () => ({
-    meta: [{ title: "Reset password — TechEdu" }],
+    meta: [{ title: "Reset password — Emtech Digital Academy" }],
   }),
   component: ResetPasswordPage,
 });
@@ -65,7 +64,7 @@ function ResetPasswordPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-12">
       <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
-        <Sparkles className="size-3.5" /> TechEdu
+        <img src="/logo-icon.png" alt="" className="size-3.5" /> Emtech Digital Academy
       </span>
 
       <Card className="w-full max-w-md">
