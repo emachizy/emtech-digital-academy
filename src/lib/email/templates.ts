@@ -14,7 +14,11 @@ function escapeHtml(value: string): string {
  * pre-built HTML; any user-supplied string embedded in it must already be
  * escaped by the caller (see escapeHtml above).
  */
-function layout(bodyHtml: string, logoUrl: string): string {
+function layout(
+  bodyHtml: string,
+  logoUrl: string,
+  footerText = "You're receiving this because you have an account on Emtech Digital Academy.",
+): string {
   return `<!doctype html>
 <html lang="en">
   <body style="margin:0;padding:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
@@ -43,7 +47,7 @@ function layout(bodyHtml: string, logoUrl: string): string {
             </tr>
             <tr>
               <td style="padding:20px 32px;border-top:1px solid #eeeeee;color:#8a8a8a;font-size:12px;">
-                You're receiving this because you have an account on Emtech Digital Academy.
+                ${footerText}
               </td>
             </tr>
           </table>
@@ -124,6 +128,33 @@ export function feedbackReadyEmail(params: {
       ${button("View feedback", params.projectUrl)}
     `,
       params.logoUrl,
+    ),
+  };
+}
+
+export function contactFormEmail(params: {
+  name: string;
+  fromEmail: string;
+  subject: string;
+  message: string;
+  logoUrl: string;
+}): EmailContent {
+  const name = escapeHtml(params.name);
+  const fromEmail = escapeHtml(params.fromEmail);
+  const subject = escapeHtml(params.subject);
+  const message = escapeHtml(params.message).replace(/\n/g, "<br />");
+
+  return {
+    subject: `Contact form: ${params.subject}`,
+    html: layout(
+      `
+      <p style="margin:0 0 12px;">New message from the contact page.</p>
+      <p style="margin:0 0 4px;"><strong>From:</strong> ${name} &lt;${fromEmail}&gt;</p>
+      <p style="margin:0 0 12px;"><strong>Subject:</strong> ${subject}</p>
+      <p style="margin:0 0 12px;padding:12px 16px;background:#f5f5f7;border-radius:8px;color:#444444;">${message}</p>
+    `,
+      params.logoUrl,
+      "This was sent from the contact form on the Emtech Digital Academy website.",
     ),
   };
 }

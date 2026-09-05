@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { feedbackReadyEmail, submissionReceivedEmail } from "./templates";
+import { contactFormEmail, feedbackReadyEmail, submissionReceivedEmail } from "./templates";
 
 describe("submissionReceivedEmail", () => {
   it("includes the student name, project title and link", () => {
@@ -82,5 +82,46 @@ describe("feedbackReadyEmail", () => {
     });
     expect(html).not.toContain("<script>");
     expect(html).toContain("&lt;script&gt;");
+  });
+});
+
+describe("contactFormEmail", () => {
+  it("includes the sender's name, email, subject and message", () => {
+    const { subject, html } = contactFormEmail({
+      name: "Jane Doe",
+      fromEmail: "jane@example.com",
+      subject: "Partnership inquiry",
+      message: "Hello, I'd like to discuss a partnership.",
+      logoUrl: "https://example.com/logo-icon.png",
+    });
+    expect(subject).toContain("Partnership inquiry");
+    expect(html).toContain("Jane Doe");
+    expect(html).toContain("jane@example.com");
+    expect(html).toContain("Partnership inquiry");
+    expect(html).toContain("Hello, I'd like to discuss a partnership.");
+  });
+
+  it("preserves line breaks in the message as <br />", () => {
+    const { html } = contactFormEmail({
+      name: "Jane",
+      fromEmail: "jane@example.com",
+      subject: "Hi",
+      message: "Line one\nLine two",
+      logoUrl: "https://example.com/logo-icon.png",
+    });
+    expect(html).toContain("Line one<br />Line two");
+  });
+
+  it("escapes HTML in name, subject and message to prevent injection", () => {
+    const { html } = contactFormEmail({
+      name: "<img src=x onerror=alert(1)>",
+      fromEmail: "jane@example.com",
+      subject: "<script>alert(2)</script>",
+      message: "<script>alert(3)</script>",
+      logoUrl: "https://example.com/logo-icon.png",
+    });
+    expect(html).not.toContain("<img src=x onerror=alert(1)>");
+    expect(html).not.toContain("<script>alert(2)</script>");
+    expect(html).not.toContain("<script>alert(3)</script>");
   });
 });

@@ -4,6 +4,7 @@ import { activity, skills } from "@/data/student";
 import { getAchievementsFn, getCertificatesFn } from "./achievements.functions";
 import { assignMentorFn, getAdminOverviewFn, getCohortsFn, getMentorsFn } from "./admin.functions";
 import { checkInFn, getAttendanceFn, getUpcomingSessionsFn } from "./attendance.functions";
+import { getContactInfoFn, submitContactFormFn, updateContactInfoFn } from "./contact.functions";
 import {
   getLessonFn,
   getSubjectFn,
@@ -67,6 +68,14 @@ export const api = {
   }) => updateMyPortfolioFn({ data: params }),
   getPublicPortfolio: (slug: string) => getPublicPortfolioFn({ data: { slug } }),
   getSearchIndex: () => getSearchIndexFn(),
+  getContactInfo: () => getContactInfoFn(),
+  submitContactForm: (params: {
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+    company?: string;
+  }) => submitContactFormFn({ data: params }),
   getProfileSettings: () => getProfileSettingsFn(),
   updateProfileSettings: (params: {
     fullName: string;
@@ -92,6 +101,12 @@ export const api = {
     getMentors: () => getMentorsFn(),
     assignMentor: (params: { cohortId: string; mentorProfileId: string | null }) =>
       assignMentorFn({ data: params }),
+    updateContactInfo: (params: {
+      email?: string;
+      phone?: string;
+      hours?: string;
+      address?: string;
+    }) => updateContactInfoFn({ data: params }),
   },
 };
 

@@ -19,6 +19,8 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { SiteHeader } from "@/components/layout/site-header";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -170,32 +172,7 @@ function Landing() {
         </div>
       ) : null}
 
-      <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <span className="flex items-center gap-2">
-            <img src="/logo-icon.png" alt="Emtech Digital Academy" className="size-8" />
-            <span className="text-sm font-semibold tracking-tight text-foreground">
-              Emtech Digital Academy
-            </span>
-          </span>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-muted-foreground sm:flex">
-            <a href="#tracks" className="hover:text-foreground">
-              Tracks
-            </a>
-            <a href="#why-us" className="hover:text-foreground">
-              Why us
-            </a>
-          </nav>
-          <div className="flex items-center gap-2">
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/login">Sign in</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link to="/dashboard">Enter the platform</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <section className="flex flex-col items-center px-6 py-20 text-center sm:py-28">
         <span className="inline-flex items-center gap-2 rounded-full border border-border bg-primary-soft px-3 py-1 text-xs font-semibold text-primary">
@@ -306,17 +283,7 @@ function Landing() {
         </Button>
       </section>
 
-      <footer className="border-t border-border px-6 py-10">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
-          <span className="flex items-center gap-2">
-            <img src="/logo-icon.png" alt="" className="size-6" />
-            <span className="text-sm font-semibold text-foreground">Emtech Digital Academy</span>
-          </span>
-          <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Emtech Digital Academy. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

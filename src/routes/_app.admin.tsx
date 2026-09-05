@@ -24,6 +24,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -31,8 +33,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api";
 import type { CohortSummary, MentorSummary } from "@/lib/api/admin.functions";
+import type { ContactInfo } from "@/lib/api/contact.functions";
 import { roleHome } from "@/lib/permissions";
 import { initials } from "@/lib/utils";
 
@@ -71,10 +75,19 @@ function Page() {
     queryKey: ["admin-mentors"],
     queryFn: api.admin.getMentors,
   });
+  const contactQuery = useQuery({
+    queryKey: ["contact-info"],
+    queryFn: api.getContactInfo,
+  });
   const [assigning, setAssigning] = useState<CohortSummary | null>(null);
 
-  const isPending = overviewQuery.isPending || cohortsQuery.isPending || mentorsQuery.isPending;
-  const isError = overviewQuery.isError || cohortsQuery.isError || mentorsQuery.isError;
+  const isPending =
+    overviewQuery.isPending ||
+    cohortsQuery.isPending ||
+    mentorsQuery.isPending ||
+    contactQuery.isPending;
+  const isError =
+    overviewQuery.isError || cohortsQuery.isError || mentorsQuery.isError || contactQuery.isError;
 
   if (isError) {
     return (
@@ -85,6 +98,7 @@ function Page() {
             void overviewQuery.refetch();
             void cohortsQuery.refetch();
             void mentorsQuery.refetch();
+            void contactQuery.refetch();
           }}
         />
       </div>
@@ -103,6 +117,7 @@ function Page() {
   const overview = overviewQuery.data;
   const cohorts = cohortsQuery.data;
   const mentors = mentorsQuery.data;
+  const contact = contactQuery.data;
 
   return (
     <div className="space-y-6">
@@ -195,6 +210,13 @@ function Page() {
         )}
       </section>
 
+      {contact ? (
+        <ContactInfoForm
+          contact={contact}
+          onSaved={() => void queryClient.invalidateQueries({ queryKey: ["contact-info"] })}
+        />
+      ) : null}
+
       <AssignMentorDialog
         cohort={assigning}
         mentors={mentors}
@@ -206,6 +228,86 @@ function Page() {
         }}
       />
     </div>
+  );
+}
+
+function ContactInfoForm({ contact, onSaved }: { contact: ContactInfo; onSaved: () => void }) {
+  const [email, setEmail] = useState(contact.email ?? "");
+  const [phone, setPhone] = useState(contact.phone ?? "");
+  const [hours, setHours] = useState(contact.hours ?? "");
+  const [address, setAddress] = useState(contact.address ?? "");
+  const [saving, setSaving] = useState(false);
+
+  async function handleSubmit() {
+    setSaving(true);
+    try {
+      await api.admin.updateContactInfo({
+        ...(email ? { email } : {}),
+        ...(phone ? { phone } : {}),
+        ...(hours ? { hours } : {}),
+        ...(address ? { address } : {}),
+      });
+      toast.success("Contact page updated");
+      onSaved();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Couldn't save. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <section className="card-surface space-y-4 p-5">
+      <div>
+        <h2 className="text-base font-semibold text-foreground">Contact page</h2>
+        <p className="text-sm text-muted-foreground">
+          What appears on the public /contact page — email, phone, hours and address.
+        </p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="contact-info-email">Email</Label>
+          <Input
+            id="contact-info-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="contact-info-phone">Phone number</Label>
+          <Input id="contact-info-phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="contact-info-hours">Hours of operation</Label>
+        <Textarea
+          id="contact-info-hours"
+          rows={2}
+          value={hours}
+          onChange={(e) => setHours(e.target.value)}
+          placeholder={"Monday – Friday: 9:00am – 6:00pm"}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="contact-info-address">Address</Label>
+        <Textarea
+          id="contact-info-address"
+          rows={2}
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+      </div>
+
+      <div className="flex justify-end">
+        <Button onClick={() => void handleSubmit()} disabled={saving}>
+          {saving ? "Saving…" : "Save changes"}
+        </Button>
+      </div>
+    </section>
   );
 }
 

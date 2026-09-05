@@ -11,6 +11,8 @@ export interface SendEmailInput {
   sender: EmailSender;
   subject: string;
   html: string;
+  /** So a reply goes straight to this address instead of the sender. */
+  replyTo?: { email: string; name?: string };
 }
 
 /**
@@ -42,6 +44,7 @@ export async function sendEmail(input: SendEmailInput): Promise<void> {
       to: [input.to],
       subject: input.subject,
       htmlContent: input.html,
+      ...(input.replyTo ? { replyTo: input.replyTo } : {}),
     }),
   });
 
